@@ -12,6 +12,7 @@ import useFormReducer from '../../utils/useFormReducer';
 import { validations, signUpValidations, otpValidations } from './Login.utils';
 import BasicAlert from '../BasicComponents/BasicAlert';
 import { utils } from '../../utils';
+import { withFirebase }from '../Firebase'
 
 const Login = ({ history }) => {
 	// clears local storage when login render
