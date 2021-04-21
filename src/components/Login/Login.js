@@ -12,7 +12,16 @@ import useFormReducer from '../../utils/useFormReducer';
 import { validations, signUpValidations, otpValidations } from './Login.utils';
 import BasicAlert from '../BasicComponents/BasicAlert';
 import { utils } from '../../utils';
+import { withRouter } from 'react-router-dom';
+import { compose } from 'recompose';
+import { withFirebase } from '../Firebase';
 
+const INITIAL_STATE = {
+	email: '',
+	password: '',
+	error: null,
+  };
+  
 const Login = ({ history }) => {
 	// clears local storage when login render
 
@@ -100,10 +109,27 @@ const Login = ({ history }) => {
 	}, [matches]);
 
 	// Validates form and performs mutation if all fields are valid
+	// const next = () => {
+	// 	const validForm = validateForm();
+	// 	if (validForm) {
+	// 		console.log('THE FORM IS VALID');
+	// 		console.log(form[0].login.value);
+	// 	}
+	// };
+
 	const next = () => {
 		const validForm = validateForm();
 		if (validForm) {
 			console.log('THE FORM IS VALID');
+			this.props.firebase
+			.doSignInWithEmailAndPassword(form[0].login.value, form[0].login.password)
+			.then(() => {
+				this.setState({ ...INITIAL_STATE });
+				history.replace('/home');
+			})
+			.catch(error => {
+				this.setState({ error });
+			});
 		}
 	};
 
@@ -148,5 +174,10 @@ const Login = ({ history }) => {
 		</Container>
 	);
 };
+
+const SignInForm = compose(
+	withRouter,
+	withFirebase,
+  )(Login);
 
 export default Login;
