@@ -20,10 +20,6 @@ export const roleOptions = [
         name: "Administrator",
     },
     {
-        id: "CLIENT",
-        name: "Client",
-    },
-    {
         id: "PADRE",
         name: "Padre/Tutor",
     },

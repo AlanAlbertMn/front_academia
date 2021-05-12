@@ -1,4 +1,5 @@
 import ShowActivities from '../components/Activities/ShowActivities'
+import UpsertUser from '../components/Users/UpsertUser';
 const routes = [
     {
         path: '/actividades',
@@ -6,14 +7,14 @@ const routes = [
         roles: ['ADMIN'],
         name: 'Actividades',
         shouldAppear: true
-    }
-	// {
-	// 	path: '/home',
-	// 	component: Home,
-	// 	roles: ['ADMIN', 'CLIENT'],
-	// 	name: 'Home',
-	// 	shouldAppear: true,
-	// },
+    },
+	{
+		path: '/registrarUsuario',
+		component: UpsertUser,
+		roles: ['ADMIN'],
+		name: 'UpsertUser',
+		shouldAppear: true,
+	},
 ];
 
 export default routes;
