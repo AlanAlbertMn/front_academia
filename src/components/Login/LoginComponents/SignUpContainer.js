@@ -32,22 +32,32 @@ export function SignUpContainer({
 			</Grid>
 			<Grid item xs={7} className={classes.field}>
 				<BasicInput
-					label='Name'
-					value={form[0].name.value}
-					errorText={form[0].name.error}
+					label='Nombre'
+					value={form[0].nombre.value}
+					errorText={form[0].nombre.error}
 					dispatchValue={dispatchValue}
-					mapperKey='name'
+					mapperKey='nombre'
 				/>
 			</Grid>
 			<Grid item xs={7} className={classes.field}>
 				<BasicInput
-					label='Username'
-					value={form[0].username.value}
-					errorText={form[0].username.error}
+					label='Apellidos'
+					value={form[0].apellidos.value}
+					errorText={form[0].apellidos.error}
 					dispatchValue={dispatchValue}
-					mapperKey='username'
+					mapperKey='apellidos'
 				/>
 			</Grid>
+			<Grid item xs={7} className={classes.field}>
+				<BasicInput
+					label='Teléfono'
+					value={form[0].telefono.value}
+					errorText={form[0].telefono.error}
+					dispatchValue={dispatchValue}
+					mapperKey='telefono'
+				/>
+			</Grid>
+
 			<Grid item xs={7} className={classes.field}>
 				<BasicInput
 					label='Email'
@@ -59,7 +69,7 @@ export function SignUpContainer({
 			</Grid>
 			<Grid item xs={7} className={classes.field}>
 				<BasicInput
-					label='Password'
+					label='Contraseña'
 					value={form[0].password.value}
 					errorText={form[0].password.error}
 					type='password'
@@ -104,7 +114,7 @@ export function SignUpContainer({
 						color='primary'
 						fullWidth={true}
 					>
-						Go back
+						Regresar
 					</BasicButton>
 				</Grid>
 			)}

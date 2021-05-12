@@ -1,11 +1,12 @@
 import {
-	loginRequired,
-	passwordRequired,
-	userSignUp,
-	passwordSignUp,
-	email,
-	nameRequired,
 	codeRequired,
+	email,
+	lastNameRequired,
+	loginRequired,
+	nameRequired,
+	passwordRequired,
+	passwordSignUp,
+	phoneRequired
 } from '../../utils/validations';
 
 export const validations = {
@@ -15,7 +16,9 @@ export const validations = {
 
 export const signUpValidations = {
 	password: passwordSignUp,
-	username: userSignUp,
+	nombre: nameRequired,
+	apellidos: lastNameRequired,
+	telefono: phoneRequired,
 	email,
 	name: nameRequired,
 };
@@ -30,7 +33,7 @@ export const content = {
 		loginForm: 'Iniciar sesión',
 		passwordInput: 'Contraseña',
 		loginInput: 'Usuario o contraseña',
-		signUpButton: 'Registrarse',
+		signUpButton: 'Registro padres',
 		signUpForm: 'Registrarse',
 		otpInput: 'Code',
 		otpButton: 'Validate code',

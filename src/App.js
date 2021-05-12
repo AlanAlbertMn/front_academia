@@ -14,7 +14,6 @@ function AppProvider(user) {
 	};
 
 	this.setUser = (newUser) => {
-		console.log(newUser);
 		this.user = newUser;
 	};
 

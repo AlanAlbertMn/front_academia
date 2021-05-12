@@ -3,7 +3,7 @@ import React, { memo, useCallback } from 'react';
 import { Grid, Typography } from '@material-ui/core';
 //RootComponents
 import BasicButton from './BasicButton';
-import { deepPurple } from '../Utils/colors';
+import { deepPurple } from '../../utils/colors';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';

@@ -1,184 +1,252 @@
 //login #2
-import React, { useEffect, useContext, useState } from 'react';
-import { Container, Grid } from '@material-ui/core';
+import React, {useContext, useEffect, useState} from 'react';
+import {Container, Grid} from '@material-ui/core';
 
-import { useLoginStyles } from './Login.styles';
-import { useTheme } from '@material-ui/core/styles';
+import {useLoginStyles} from './Login.styles';
+import {useTheme} from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import AppContext from '../Context/AppContext';
-import { SplashScreenContainer } from './LoginComponents/SplashScreenContainer';
-import { LoginContainer } from './LoginComponents/LoginContainer';
+import {SplashScreenContainer} from './LoginComponents/SplashScreenContainer';
+import {LoginContainer} from './LoginComponents/LoginContainer';
 import useFormReducer from '../../utils/useFormReducer';
-import { validations, signUpValidations, otpValidations } from './Login.utils';
+import {signUpValidations, validations} from './Login.utils';
 import BasicAlert from '../BasicComponents/BasicAlert';
-import { utils } from '../../utils';
-import { withRouter } from 'react-router-dom';
-import { compose } from 'recompose';
-import { withFirebase } from '../Firebase';
+import {utils} from '../../utils';
+import {withRouter} from 'react-router-dom';
+import {compose} from 'recompose';
+import {withFirebase} from '../Firebase';
+import {SignUpContainer} from "./LoginComponents/SignUpContainer";
 
-const INITIAL_STATE = {
-	email: '',
-	password: '',
-	error: null,
-  };
-  
-const Login = ({ history }) => {
-	// clears local storage when login render
+const Login = ({history, firebase}) => {
+    // clears local storage when login render
 
-	useEffect(() => {
-		localStorage.clear();
-	}, []);
-	// Handles alert
-	const [alert, handleAlert] = useState({
-		open: false,
-		text: '',
-	});
+    useEffect(() => {
+        localStorage.clear();
+    }, []);
+    // Handles alert
+    const [alert, handleAlert] = useState({
+        open: false,
+        text: '',
+    });
 
-	// Use custom theme
-	const theme = useTheme();
-	const matches = useMediaQuery(theme.breakpoints.up('md'));
-	const appProvider = useContext(AppContext);
-	const classes = useLoginStyles();
+    // Use custom theme
+    const theme = useTheme();
+    const matches = useMediaQuery(theme.breakpoints.up('md'));
+    const appProvider = useContext(AppContext);
+    const classes = useLoginStyles();
 
-	// Reducer used to handle the elements to display in login
-	const [views, dispatchViews] = useState({
-		login: true,
-		splashScreen: true,
-		signUp: false,
-		otpScreen: false,
-	});
+    // Reducer used to handle the elements to display in login
+    const [views, dispatchViews] = useState({
+        login: true,
+        splashScreen: true,
+        signUp: false,
+        otpScreen: false,
+    });
 
-	// In case login request is performed with no errors
-	const handleSuccess = (data) => {
-		resetForm();
-		if (data.signIn.user) {
-			const userRoutes = utils.getUserRoutes(data.signIn.user.role);
-			localStorage.setItem('token', data.signIn.token.token);
-			localStorage.setItem('xcoins-user', JSON.stringify(data.signIn.user));
-			appProvider.setUser(data.signIn.user);
-			appProvider.setRoutes(userRoutes);
-			history.replace('/home');
-		}
-	};
+    // In case login request is performed with no errors
+    const handleSuccess = (data) => {
+        resetForm();
+        if (data) {
+            const userRoutes = utils.getUserRoutes(data.user.role);
+            localStorage.setItem('academia-user', JSON.stringify(data.user));
+            appProvider.setUser(data.user);
+            appProvider.setRoutes(userRoutes);
+            history.replace('/actividades');
+        }
+    };
 
-	const handleError = (error) => {
-		handleAlert({
-			open: true,
-			text: error.message,
-			severity: 'error',
-		});
-	};
+    const handleError = (error) => {
+        handleAlert({
+            open: true,
+            text: error.message,
+            severity: 'error',
+        });
+    };
 
-	// Uses react custom hook to handle form state
-	const [
-		form,
-		_dispatchForm,
-		{ updateForm, validateForm, resetForm },
-	] = useFormReducer({
-		initialState: [
-			{
-				login: {
-					value: '',
-					error: null,
-					valid: false,
-				},
-				password: {
-					value: '',
-					error: null,
-					valid: false,
-				},
-			},
-		],
-		validations,
-	});
+    const handleSuccessfulSignUp = () => {
+        resetSignUpForm()
+        dispatchViews(prevState => ({...prevState, login: true, signUp: false}))
+        handleAlert({
+            open: true,
+            text: 'Se han registrado tus datos, espera hasta que estés autorizado por la administración para ingresar',
+            severity: 'success'
+        })
+    }
 
-	useEffect(() => {
-		if (matches) {
-			dispatchViews({
-				login: true,
-				splashScreen: true,
-				signUp: false,
-			});
-		} else {
-			dispatchViews({
-				login: false,
-				splashScreen: true,
-				signUp: false,
-			});
-		}
-	}, [matches]);
+    // Uses react custom hook to handle form state
+    const [
+        form,,
+        {updateForm, validateForm, resetForm},
+    ] = useFormReducer({
+        initialState: [
+            {
+                login: {
+                    value: '',
+                    error: null,
+                    valid: false,
+                },
+                password: {
+                    value: '',
+                    error: null,
+                    valid: false,
+                },
+            },
+        ],
+        validations
+    });
 
-	// Validates form and performs mutation if all fields are valid
-	// const next = () => {
-	// 	const validForm = validateForm();
-	// 	if (validForm) {
-	// 		console.log('THE FORM IS VALID');
-	// 		console.log(form[0].login.value);
-	// 	}
-	// };
+    const [
+        signUpForm,,
+        {updateForm: updateSignUpForm, validateForm: validateSignUpForm, resetForm: resetSignUpForm}
+    ] = useFormReducer({
+        initialState: [
+            {
+                nombre: {
+                    value: '',
+                    error: null,
+                    valid: null
+                },
+                apellidos: {
+                    value: '',
+                    error: null,
+                    valid: null
+                },
+                email: {
+                    value: '',
+                    error: null,
+                    valid: null
+                },
+                telefono: {
+                    value: '',
+                    error: null,
+                    valid: null
+                },
+                password: {
+                    value: '',
+                    error: null,
+                    valid: null
+                }
 
-	const next = () => {
-		const validForm = validateForm();
-		if (validForm) {
-			console.log('THE FORM IS VALID');
-			this.props.firebase
-			.doSignInWithEmailAndPassword(form[0].login.value, form[0].login.password)
-			.then(() => {
-				this.setState({ ...INITIAL_STATE });
-				history.replace('/home');
-			})
-			.catch(error => {
-				this.setState({ error });
-			});
-		}
-	};
+            }
+        ],
+        validations: signUpValidations
+    })
 
-	return (
-		<Container
-			disableGutters={true}
-			maxWidth='xl'
-			className={matches ? classes.root : classes.rootSm}
-		>
-			<Grid
-				container
-				alignContent='center'
-				alignItems='center'
-				className={matches ? classes.container : classes.containerSm}
-			>
-				{views.splashScreen && (
-					<SplashScreenContainer
-						classes={classes}
-						matches={matches}
-						dispatchViews={dispatchViews}
-						views={views}
-					/>
-				)}
-				{views.login && (
-					<LoginContainer
-						next={next}
-						matches={matches}
-						classes={classes}
-						form={form}
-						updateForm={updateForm}
-						views={views}
-						dispatchViews={dispatchViews}
-					/>
-				)}
-			</Grid>
-			<BasicAlert
-				open={alert.open}
-				handleAlert={handleAlert}
-				severity={alert.severity}
-				text={alert.text}
-			/>
-		</Container>
-	);
-};
+
+    useEffect(() => {
+        if (matches) {
+            dispatchViews({
+                login: true,
+                splashScreen: true,
+                signUp: false,
+            });
+        } else {
+            dispatchViews({
+                login: false,
+                splashScreen: true,
+                signUp: false,
+            });
+        }
+    }, [matches]);
+
+    // Validates form and performs mutation if all fields are valid
+    // const next = () => {
+    // 	const validForm = validateForm();
+    // 	if (validForm) {
+    // 		console.log('THE FORM IS VALID');
+    // 		console.log(form[0].login.value);
+    // 	}
+    // };
+
+
+    const next = async () => {
+        const validForm = validateForm();
+        if (validForm) {
+            try {
+                const user = await firebase.login({email: form[0].login.value, password: form[0].password.value})
+                if (user) {
+                    handleSuccess(user)
+                }
+            } catch (error) {
+                handleError(error)
+            }
+        }
+    }
+
+    const nextForSignUp = async () => {
+        const validForm = validateSignUpForm()
+        if (validForm) {
+            try {
+                await firebase.signUp({
+                    data: {
+                        email: signUpForm[0].email.value,
+                        password: signUpForm[0].password.value
+                    }
+                })
+                handleSuccessfulSignUp()
+            } catch (error) {
+                handleError(error)
+            }
+        }
+    }
+
+    return (
+        <Container
+            disableGutters={true}
+            maxWidth='xl'
+            className={matches ? classes.root : classes.rootSm}
+        >
+            <Grid
+                container
+                alignContent='center'
+                alignItems='center'
+                className={matches ? classes.container : classes.containerSm}
+            >
+                {views.splashScreen && (
+                    <SplashScreenContainer
+                        classes={classes}
+                        matches={matches}
+                        dispatchViews={dispatchViews}
+                        views={views}
+                    />
+                )}
+                {views.login && (
+                    <LoginContainer
+                        next={next}
+                        matches={matches}
+                        classes={classes}
+                        form={form}
+                        updateForm={updateForm}
+                        views={views}
+                        dispatchViews={dispatchViews}
+                    />
+                )}
+                {views.signUp && (
+                    <SignUpContainer
+                        matches={matches}
+                        classes={classes}
+                        form={signUpForm}
+                        updateForm={updateSignUpForm}
+                        views={views}
+                        dispatchViews={dispatchViews}
+                        next={nextForSignUp}
+                    />
+                )}
+            </Grid>
+            <BasicAlert
+                open={alert.open}
+                handleAlert={handleAlert}
+                severity={alert.severity}
+                text={alert.text}
+            />
+        </Container>
+    );
+}
 
 const SignInForm = compose(
-	withRouter,
-	withFirebase,
-  )(Login);
- 
-export default Login;
+    withRouter,
+    withFirebase,
+)(Login);
+
+export default SignInForm;
 //

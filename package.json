@@ -21,7 +21,8 @@
     "react-scripts": "4.0.3",
     "recompose": "^0.30.0",
     "validate.js": "^0.13.1",
-    "web-vitals": "^1.1.1"
+    "web-vitals": "^1.1.1",
+    "working_bee": "0.0.9"
   },
   "scripts": {
     "start": "react-scripts start",
