@@ -16,6 +16,7 @@ import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {withFirebase} from '../Firebase';
 import {SignUpContainer} from "./LoginComponents/SignUpContainer";
+import UpsertUser from '../Users/UpsertUser';
 
 const Login = ({history, firebase}) => {
     // clears local storage when login render
@@ -239,6 +240,7 @@ const Login = ({history, firebase}) => {
                 severity={alert.severity}
                 text={alert.text}
             />
+        <UpsertUser></UpsertUser>
         </Container>
     );
 }
