@@ -13,12 +13,28 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
 import { validations, roleOptions } from "./UpsertUser.utils";
+import { withRouter } from 'react-router-dom';
+import { compose } from 'recompose';
+import { withFirebase } from '../Firebase';
 
-export default function UpsertUser({ history }) {
+
+export default function UpsertUser({ history, firebase }) {
     const [alert, handleAlert] = useState({
         open: false,
         text: "",
     });
+
+    const handleSuccess = (data) => {
+        // resetForm();
+        // if (data) {
+        //     const userRoutes = utils.getUserRoutes(data.user.role);
+        //     localStorage.setItem('academia-user', JSON.stringify(data.user));
+        //     appProvider.setUser(data.user);
+        //     appProvider.setRoutes(userRoutes);
+        //     history.replace('/actividades');
+        // }
+    };
+
     const [form, _dispatchForm, { updateForm, validateForm }] = useFormReducer({
         initialState: [
             {
@@ -154,22 +170,32 @@ export default function UpsertUser({ history }) {
         });
     };
 
-    const next = () => {
-        const valid = validateForm();
-        if (valid) {
-            //   executeMutation({
-            //     variables: {
-            //       input: {
-            //         role: form[0].role.value,
-            //         username: form[0].username.value,
-            //         password: form[0].password.value,
-            //         name: form[0].name.value,
-            //         email: form[0].email.value,
-            //       },
-            //     },
-            //   });
+    const next = async () => {
+        const validForm = validateForm();
+        if (validForm) {
+            try {
+                const user = await firebase.addUser(
+                    {
+                        name: form[0].name.value,
+                        lastName: form[0].lastName.value,
+                        email: form[0].email.value,
+                        telefono: form[0].telefono.value,
+                        genero: form[0].genero.value,
+                        birthday: form[0].birthday.value,
+                        calle: form[0].calle.value,
+                        col: form[0].col.value,
+                        municipio: form[0].municipio.value,
+                        estado: form[0].estado.value,
+                        codPostal: form[0].codPostal.value
+                    })
+                if (user) {
+                    handleSuccess(user)
+                }
+            } catch (error) {
+                handleError(error)
+            }
         }
-    };
+    }
 
     const [value, setValue] = React.useState('femenino');
 
@@ -425,3 +451,8 @@ export default function UpsertUser({ history }) {
         </BasicContainer>
     );
 }
+
+const UpsertUserF = compose(
+    withRouter,
+    withFirebase,
+)(UpsertUser);

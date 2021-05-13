@@ -11,7 +11,8 @@ import {
 } from './deleteOperations'
 
 import {
-    createParent
+    createParent,
+    createUser
 } from "./Create";
 
 import {
@@ -57,6 +58,8 @@ class Firebase {
     removeActivity = ({id}) => removeActivity({firebase: this, id})
 
     addParent = ({data}) => createParent({firebase: this, data})
+
+    addUser = ({data}) => createUser({firebase: this, data})
 
     signUp = ({data}) => signUp({firebase: this, data})
 
