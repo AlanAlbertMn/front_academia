@@ -1,5 +1,3 @@
 export const deleteActivity = async ({firebase, id}) => {
-    const response = await firebase.db.collection('activities').doc(id).delete()
-
-    console.log(response)
+    return await firebase.db.collection('activities').doc(id).delete()
 }

@@ -19,5 +19,5 @@ export const readActivity = async ({firebase, id}) => {
         throw new Error('La actividad solicitada no fue encontrada')
     }
 
-    return {...activitiesSnapshot.docs[0].data(), id: activitiesSnapshot.docs[0].id}
+    return {...activitiesSnapshot.data(), id: activitiesSnapshot.id}
 }

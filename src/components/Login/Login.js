@@ -18,9 +18,10 @@ import {withFirebase} from '../Firebase';
 import {SignUpContainer} from "./LoginComponents/SignUpContainer";
 
 const Login = ({history, firebase}) => {
-    // clears local storage when login render
+    // clears local storage when login renders
 
     useEffect(() => {
+
         localStorage.clear();
     }, []);
     // Handles alert

@@ -44,8 +44,13 @@ export const columns = [
 
 
 export const content = {
-    deleteButtonText: 'Eliminar actividad',
+    deleteButtonText: 'Eliminar',
     title: 'Actividades',
     addButtonText: 'Agregar actividades',
-    addLink: '/gestion-actividad'
+    editButtonText: 'Editar',
+    addLink: '/crear-actividad',
+    updateLink: '/actualizar-actividad/',
+    studentsLink: '/inscripciones/',
+    extraActionText: 'Gestionar inscritos',
+    module: 'activities'
 }

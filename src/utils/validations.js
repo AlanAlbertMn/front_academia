@@ -1,5 +1,15 @@
 import {language} from '../config';
 
+export const costRequired = {
+    presence: {
+        allowEmpty: false,
+        message:
+            language === 'en'
+                ? '^*Cost is required'
+                : '^*El precio es requerido'
+    }
+}
+
 export const email = {
     email: {
         message:
@@ -19,6 +29,70 @@ export const codeRequired = {
         message: '^The code is required',
     },
 };
+
+export const instructorsRequired = {
+    presence: {
+        allowEmpty: false,
+        message:
+            language === 'en'
+                ? '^*You must set at least one instructor'
+                : '^*Debes seleccionar al menos un instructor'
+    }
+}
+
+export const hoursPerWeekRequired = {
+    presence: {
+        allowEmpty: false,
+        message:
+            language === 'en'
+                ? '^*Hours per week are required'
+                : '^*Las horas por semana son requeridas'
+    }
+}
+
+export const genderRequired = {
+    presence: {
+        allowEmpty: false,
+        message: '^*El género es requerido'
+    }
+}
+
+
+export const birthdayRequired = {
+    presence: {
+        allowEmpty: false,
+        message: '^*La fecha de nacimiento es requerida'
+    }
+}
+
+export const addressRequired = {
+    presence: {
+        allowEmpty: false,
+        message: '^*La dirección es requerida'
+    }
+}
+
+export const inscriptionDateRequired = {
+    presence: {
+        allowEmpty: false,
+        message: '^*La fecha de inscripción es requerida'
+    }
+}
+
+export const medicalDataRequired = {
+    presence: {
+        allowEmpty: false,
+        message: '^*Los datos médicos son requeridos'
+    }
+}
+
+export const taxDataRequired = {
+    presence: {
+        allowEmpty: false,
+        message: '^*Los datos fiscales son requeridos'
+    }
+}
+
 
 export const lastNameRequired = {
     presence: {
@@ -45,6 +119,13 @@ export const user = {
         message: '^*User is required',
     },
 };
+
+export const studentRequired = {
+    presence: {
+        allowEmpty: false,
+        message: '^*El estudiante es requerido'
+    }
+}
 
 export const userLogin = {
     ...user,
@@ -105,3 +186,13 @@ export const passwordSignUp = {
         tooLong: language === 'en' ? '^*Password length cannot be longer than 20 characters' : '^*La contraseña no debe tener una magnitud de más de 20 caracteres',
     },
 };
+
+export const scheduleRequired = {
+    presence: {
+        allowEmpty: false,
+        message:
+            language === 'en'
+                ? '^*The schedule is requireed'
+                : '^*El horario es requerido'
+    }
+}

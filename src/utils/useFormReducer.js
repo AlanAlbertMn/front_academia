@@ -54,6 +54,9 @@ const reducer = (prevState, action) => {
       return newState;
     case "reset":
       return action.resetState;
+
+    case "set":
+      return action.newState
     case "validateField":
       const validatedArr = Array.from(prevState);
       validatedArr[action.index][action.key].error = action.error;
@@ -66,11 +69,11 @@ const reducer = (prevState, action) => {
 const useFormReducer = ({ initialState, validations }) => {
   const [form, dispatchForm] = useReducer(reducer, initialState);
 
-  const validateForm = () => {
+  const validateForm = (customValidations) => {
     const valid = formValidation({
       form,
       dispatchForm,
-      validations,
+      validations: customValidations ? customValidations : validations,
     });
 
     return valid;

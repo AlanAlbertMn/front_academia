@@ -3,7 +3,8 @@ import 'firebase/auth';
 import 'firebase/firestore'
 import {
     getUser,
-    getActivities
+    getActivities,
+    getInstructors, getActivity, getStudents
 } from "./readOperations";
 
 import {
@@ -16,8 +17,9 @@ import {
 
 import {
     login,
-    signUp
+    signUp, upsertActivity
 } from "./complexOperations";
+import {addActivity} from "./createOperations";
 
 
 const config = {
@@ -54,6 +56,10 @@ class Firebase {
 
     getActivities = () => getActivities({firebase: this})
 
+    addActivity = ({data}) => addActivity({firebase: this, data})
+
+    getActivity = ({id}) => getActivity({firebase: this, id})
+
     removeActivity = ({id}) => removeActivity({firebase: this, id})
 
     addParent = ({data}) => createParent({firebase: this, data})
@@ -61,6 +67,13 @@ class Firebase {
     signUp = ({data}) => signUp({firebase: this, data})
 
     getUser = ({email}) => getUser({firebase: this, email})
+
+    getInstructors = () => getInstructors({firebase: this})
+
+
+    upsertActivity = ({data}) => upsertActivity({firebase: this, data})
+
+    getStudents = () => getStudents({firebase: this})
 
     doPasswordUpdate = password =>
         this.auth.currentUser.updatePassword(password);

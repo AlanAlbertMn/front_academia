@@ -1,5 +1,6 @@
 import {
-    readUser
+    readUser,
+    readInstructors
 } from "./Users";
 
 import {
@@ -7,8 +8,14 @@ import {
     readActivities
 } from "./Activities";
 
+import {
+    readStudents
+} from "./Users";
+
 export {
     readUser,
+    readInstructors,
     readActivity,
-    readActivities
+    readActivities,
+    readStudents,
 }
