@@ -17,6 +17,7 @@ import {compose} from 'recompose';
 import {withFirebase} from '../Firebase';
 import {SignUpContainer} from "./LoginComponents/SignUpContainer";
 import UpsertUser from '../Users/UpsertUser';
+import ShowUsers from '../Users/ShowUsers';
 
 const Login = ({history, firebase}) => {
     // clears local storage when login render
@@ -241,6 +242,7 @@ const Login = ({history, firebase}) => {
                 text={alert.text}
             />
         <UpsertUser></UpsertUser>
+        <ShowUsers></ShowUsers>
         </Container>
     );
 }
