@@ -27,4 +27,12 @@ export const roleOptions = [
         id: "ALUMNO",
         name: "Alumno",
     },
+    {
+        id: "RESPONSABLE",
+        name: "Responsable",
+    },
+    {
+        id: "INSTRUCTOR",
+        name: "Intructor",
+    },
 ];
