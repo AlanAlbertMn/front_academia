@@ -169,7 +169,7 @@ const Login = ({history, firebase}) => {
                     handleSuccess(user)
                 }
             } catch (error) {
-                handleError(error)
+                handleError('Las credenciales no son validas')
             }
         }
     }

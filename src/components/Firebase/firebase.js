@@ -19,6 +19,7 @@ import {
     login,
     signUp, upsertActivity,
     upsertUser,
+    getActivitiesByRole
 } from "./complexOperations";
 import {addActivity} from "./createOperations";
 
@@ -53,6 +54,8 @@ class Firebase {
 
     doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
 
+    getActivitiesByRole = ({id, role}) => getActivitiesByRole({firebase: this, id, role})
+
     login = ({email, password}) => login({firebase: this, email, password});
 
     getActivities = () => getActivities({firebase: this})
@@ -67,7 +70,7 @@ class Firebase {
 
     signUp = ({data}) => signUp({firebase: this, data})
 
-    getUser = ({email}) => getUser({firebase: this, email})
+    getUser = ({id}) => getUser({firebase: this, id})
 
     getInstructors = () => getInstructors({firebase: this})
 

@@ -1,12 +1,15 @@
 import {
     readUser,
     readInstructors,
-    readUsers
+    readUsers,
+    readUserWithEmail
 } from "./Users";
 
 import {
     readActivity,
-    readActivities
+    readActivities,
+    readActivitiesFromStudent,
+    readActivitiesFromInstructor,
 } from "./Activities";
 
 import {
@@ -20,4 +23,7 @@ export {
     readActivities,
     readStudents,
     readUsers,
+    readActivitiesFromStudent,
+    readUserWithEmail,
+    readActivitiesFromInstructor
 };

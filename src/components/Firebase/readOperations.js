@@ -1,6 +1,6 @@
 import {readActivities, readActivity, readInstructors, readStudents, readUser, readUsers} from "./Read";
 
-export const getUser = ({firebase, email}) => readUser({firebase, email})
+export const getUser = ({firebase, id}) => readUser({firebase, id})
 
 export const getActivities = ({firebase}) => readActivities({firebase})
 

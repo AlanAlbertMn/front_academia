@@ -8,15 +8,14 @@ import AppContext from '../../Context/AppContext';
 import {compose} from 'recompose';
 import {withFirebase} from '../../Firebase';
 
-const loadActivities = async ({firebase}) => {
+const loadActivities = async ({firebase, id, role}) => {
     let activities = []
-    const activitiesFromServer = await firebase.getActivities()
+    const activitiesFromServer = await firebase.getActivitiesByRole({id, role})
 
     if (activitiesFromServer && Array.isArray(activitiesFromServer)) activities = activitiesFromServer.map(activity => ({
         ...activity,
         instructors: activity.instructors.map(instructor => instructor.name).join(' | ')
     }))
-
     return activities
 }
 
@@ -31,13 +30,15 @@ function ShowActivitiesContainer({history, firebase}) {
     const handleStudents = (id) => {
         history.push(content.studentsLink + id)
     }
-    useEffect(() => {
-        loadActivities({firebase}).then(res => setActivities(res))
-    }, [firebase])
 
+    console.log(appProvider)
+
+    useEffect(() => {
+        loadActivities({firebase, id: appProvider.user, role: appProvider.user.role}).then(res => setActivities(res))
+    }, [firebase, appProvider])
 
     const refetch = () => {
-        loadActivities({firebase}).then(res => setActivities(res))
+        loadActivities({firebase, id: appProvider.user, role: appProvider.user.role}).then(res => setActivities(res))
     }
 
     return (
