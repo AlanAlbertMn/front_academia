@@ -32,7 +32,7 @@ export const content = {
 		loginButton: 'Iniciar sesión',
 		loginForm: 'Iniciar sesión',
 		passwordInput: 'Contraseña',
-		loginInput: 'Usuario o contraseña',
+		loginInput: 'Email',
 		signUpButton: 'Registro padres',
 		signUpForm: 'Registrarse',
 		otpInput: 'Code',
