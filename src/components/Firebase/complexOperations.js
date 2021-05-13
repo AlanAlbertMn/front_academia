@@ -1,6 +1,7 @@
 import {
     readActivities,
     readUser,
+    readUserWithEmail,
     readActivitiesFromStudent,
     readActivitiesFromInstructor
 } from "./Read";
@@ -16,7 +17,7 @@ export const login = async ({firebase, email, password}) => {
     try {
         await firebase.doSignInWithEmailAndPassword(email, password)
 
-        const user = await readUser({firebase, email})
+        const user = await readUserWithEmail({firebase, email})
 
         return {
             user

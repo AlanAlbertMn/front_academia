@@ -1,7 +1,8 @@
 import {
     readUser,
     readInstructors,
-    readUsers
+    readUsers,
+    readUserWithEmail
 } from "./Users";
 
 import {
@@ -23,5 +24,6 @@ export {
     readStudents,
     readUsers,
     readActivitiesFromStudent,
+    readUserWithEmail,
     readActivitiesFromInstructor
 };

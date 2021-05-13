@@ -1,5 +1,5 @@
 import {Grid, Typography} from "@material-ui/core";
-import React, {useState} from "react";
+import React, {useEffect, useState, useMemo} from "react";
 import BasicAutocomplete from "../BasicComponents/BasicAutocomplete";
 import BasicInput from "../BasicComponents/BasicInput";
 import BasicButton from "../BasicComponents/BasicButton";
@@ -12,14 +12,22 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
-import {parentValidation, instructorValidation, adminValidation,  studentValidation, resposableValidation, roleOptions} from "./utils";
+import {
+    parentValidation,
+    instructorValidation,
+    adminValidation,
+    studentValidation,
+    resposableValidation,
+    roleOptions
+} from "./utils";
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {withFirebase} from '../Firebase';
+import BasicLoading from "../BasicComponents/BasicLoading";
 
 const studentTemplate = ['name', 'lastName', 'birthday', 'address', 'inscriptionDate', 'medicalData', 'role', 'email']
 
-const parentTemplate = ['name', 'lastName', 'phone', 'email', 'taxData', 'role']
+const parentTemplate = ['name', 'lastName', 'phone', 'email', 'taxData', 'role', 'address']
 
 const responsableTemplate = ['name', 'lastName', 'phone', 'email', 'role']
 
@@ -43,12 +51,7 @@ const validationChooser = {
     RESPONSABLE: resposableValidation
 }
 
-function UpsertUser({history, firebase}) {
-    const [alert, handleAlert] = useState({
-        open: false,
-        text: "",
-    });
-
+function UpsertUserForm({history, firebase, user}) {
     const handleSuccess = (data) => {
         // resetForm();
         // if (data) {
@@ -64,52 +67,52 @@ function UpsertUser({history, firebase}) {
         initialState: [
             {
                 name: {
-                    value: "",
+                    value: user?.name || '',
                     valid: false,
                     error: null,
                 },
                 lastName: {
-                    value: "",
+                    value: user?.lastName || '',
                     valid: false,
                     error: null,
                 },
                 address: {
-                    value:'',
+                    value: user?.address || '',
                     valid: false,
                     error: null
                 },
                 phone: {
-                    value: "",
+                    value: user?.phone || '',
                     valid: false,
                     error: null,
                 },
                 email: {
-                    value: "",
+                    value: user?.email || '',
                     valid: false,
                     error: null,
                 },
                 taxData: {
-                    value: '',
+                    value: user?.taxData || '',
                     valid: false,
                     error: null
                 },
                 medicalData: {
-                    value: '',
+                    value: user?.medicalData || '',
                     valid: false,
                     error: null
                 },
                 birthday: {
-                    value: '',
+                    value: user?.birthday || '',
                     valid: false,
                     error: null
                 },
                 inscriptionDate: {
-                    value: '',
+                    value: user?.inscriptionDate || '',
                     valid: false,
                     error: null
                 },
                 role: {
-                    value: "",
+                    value: user?.role || '',
                     valid: false,
                     error: null
                 }
@@ -127,6 +130,12 @@ function UpsertUser({history, firebase}) {
     const handleOnCompleted = () => {
         history.replace("/usuarios");
     };
+
+    const [alert, handleAlert] = useState({
+        open: false,
+        text: "",
+    });
+
 
     const handleError = (error) => {
         handleAlert({
@@ -149,15 +158,24 @@ function UpsertUser({history, firebase}) {
 
                 for (let i = 0; i < template.length; i++) {
                     const currentKey = template[i];
-                    console.log(currentKey)
                     userData[currentKey] = form[0][currentKey].value
-                    console.log(form[0][currentKey].value)
                 }
 
-                console.log(userData)
                 try {
-                    firebase.upsertUser({data: {...userData, password: '123456'}}).then(res => handleOnCompleted())
-                } catch(error) {
+                    firebase.upsertUser({
+                        data: {
+                            ...userData,
+                            password: '123456', ...(user ? {id: user.id} : {})
+                        }
+                    }).then(res => {
+                        handleOnCompleted()
+                        handleAlert({
+                            open: true,
+                            text: "El usuario se ha " + user ? 'modificado' : 'creado',
+                            severity: 'success'
+                        });
+                    })
+                } catch (error) {
                     console.log(error)
                 }
             }
@@ -173,7 +191,7 @@ function UpsertUser({history, firebase}) {
     return (
         <BasicContainer justify='flex-start' alignContent='flex-start'>
             <Grid item xs={12} className={classes.title}>
-                <Typography variant="h3">Registrar usuario</Typography>
+                <Typography variant="h3">{user ? 'Modificar usuario' : 'Crear usuario'}</Typography>
             </Grid>
             <Grid item xs={12} className={classes.field}>
                 <BasicAutocomplete
@@ -286,7 +304,6 @@ function UpsertUser({history, firebase}) {
             )}
             {form[0].role.value === 'STUDENT' && (
                 <Grid item xs={12} className={classes.field}>
-                    {/* //direccion */}
                     <BasicInput
                         label="Datos médicos"
                         value={form[0].medicalData.value}
@@ -298,18 +315,44 @@ function UpsertUser({history, firebase}) {
             )}
             <Grid item xs={12} container justify="center" className={classes.title}>
                 <BasicButton handleClick={next} fullWidth color="primary">
-                    Registrar persona
+                    {!user ? 'Crear usuario' : 'Modificar usuario'}
                 </BasicButton>
             </Grid>
             <BasicAlert
                 open={alert.open}
                 handleAlert={handleAlert}
-                severity="error"
+                severity={alert.severity}
                 text={alert.text}
             />
         </BasicContainer>
     );
 }
+
+function UpsertUser({history, firebase, match}) {
+    const id = useMemo(() => match.params.user, [match])
+    const [user, setUser] = useState()
+
+    const [loading, setLoading] = useState(!!id)
+
+    useEffect(() => {
+        if (id) {
+            firebase.getUser({id}).then(res => {
+                setUser(res)
+                setLoading(false)
+            })
+        }
+    }, [id, firebase])
+
+    if (loading) {
+        return <BasicLoading/>
+    }
+
+    return (
+        <UpsertUserForm user={user} firebase={firebase} history={history}/>
+    )
+
+}
+
 
 export default compose(
     withRouter,

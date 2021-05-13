@@ -70,7 +70,7 @@ class Firebase {
 
     signUp = ({data}) => signUp({firebase: this, data})
 
-    getUser = ({email}) => getUser({firebase: this, email})
+    getUser = ({id}) => getUser({firebase: this, id})
 
     getInstructors = () => getInstructors({firebase: this})
 

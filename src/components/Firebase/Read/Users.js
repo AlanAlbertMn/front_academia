@@ -1,5 +1,16 @@
-export const readUser = async ({firebase, email}) => {
+export const readUser = async ({firebase, id}) => {
 
+    const usersSnapshot = await firebase.db.collection('users').doc(id).get();
+
+    if (usersSnapshot.empty) {
+        throw new Error('El usuario buscado no se encuentra registrado')
+    }
+
+    return {...usersSnapshot.data(), id: usersSnapshot.id}
+
+}
+
+export const readUserWithEmail = async ({firebase, email}) => {
     const usersSnapshot = await firebase.db.collection('users').where('email', '==', email).get();
 
     if (usersSnapshot.empty) {

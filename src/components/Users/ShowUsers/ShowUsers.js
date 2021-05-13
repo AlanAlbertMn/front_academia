@@ -44,7 +44,7 @@ function ShowUsers({history, firebase, match}) {
             <BasicTable
                 columns={columns}
                 title={content.title}
-                //handleEdit={handleEdit} To be implemented later on
+                handleEdit={handleEdit} To be implemented later on
                 history={history}
                 data={users}
                 content={content}
