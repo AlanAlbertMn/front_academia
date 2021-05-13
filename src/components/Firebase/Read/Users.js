@@ -10,6 +10,20 @@ export const readUser = async ({firebase, email}) => {
 
 }
 
+export const readUsers = async({firebase}) => {
+    const usersSnapshot = await firebase.db.collection('users').get();
+
+    const users = []
+
+    if (usersSnapshot.empty) {
+        return []
+    } else {
+        usersSnapshot.forEach(doc => users.push({...doc.data(), id: doc.id}))
+    }
+
+    return users
+}
+
 export const readInstructors = async ({firebase}) => {
     const instructorsSnapshot = await firebase.db.collection('users').where('role', '==', 'INSTRUCTOR').get()
 

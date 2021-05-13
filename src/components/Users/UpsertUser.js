@@ -17,6 +17,32 @@ import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {withFirebase} from '../Firebase';
 
+const studentTemplate = ['name', 'lastName', 'gender', 'birthday', 'address', 'inscriptionDate', 'medicalData', 'role']
+
+const parentTemplate = ['name', 'lastName', 'phone', 'email', 'taxData', 'role']
+
+const responsableTemplate = ['name', 'lastName', 'phone', 'email', 'role']
+
+const instructorTemplate = ['name', 'lastName', 'phone', 'email', 'birthday', 'role']
+
+const adminTemplate = ['name', 'lastName', 'phone', 'email', 'role'];
+
+const templateChooser = {
+    ADMIN: adminTemplate,
+    INSTRUCTOR: instructorTemplate,
+    STUDENT: studentTemplate,
+    PARENT: parentTemplate,
+    RESPONSABLE: responsableTemplate
+}
+
+const validationChooser = {
+    ADMIN: adminValidation,
+    INSTRUCTOR: instructorValidation,
+    STUDENT: studentValidation,
+    PARENT: parentValidation,
+    RESPONSABLE: resposableValidation
+}
+
 function UpsertUser({history, firebase}) {
     const [alert, handleAlert] = useState({
         open: false,
@@ -46,6 +72,11 @@ function UpsertUser({history, firebase}) {
                     value: "",
                     valid: false,
                     error: null,
+                },
+                address: {
+                    value:'',
+                    valid: false,
+                    error: null
                 },
                 phone: {
                     value: "",
@@ -84,6 +115,7 @@ function UpsertUser({history, firebase}) {
                 }
             },
         ],
+        validations: {}
     });
 
     const classes = useUpsertUserStyles();
@@ -93,7 +125,7 @@ function UpsertUser({history, firebase}) {
     };
 
     const handleOnCompleted = () => {
-        history.replace("/users");
+        history.replace("/usuarios");
     };
 
     const handleError = (error) => {
@@ -104,28 +136,30 @@ function UpsertUser({history, firebase}) {
     };
 
     const next = async () => {
-        const validForm = validateForm();
-        if (validForm) {
-            try {
-                const user = await firebase.addUser(
-                    {
-                        name: form[0].name.value,
-                        lastName: form[0].lastName.value,
-                        email: form[0].email.value,
-                        phone: form[0].phone.value,
-                        genero: form[0].genero.value,
-                        birthday: form[0].birthday.value,
-                        calle: form[0].calle.value,
-                        col: form[0].col.value,
-                        municipio: form[0].municipio.value,
-                        estado: form[0].estado.value,
-                        codPostal: form[0].codPostal.value
-                    })
-                if (user) {
-                    handleSuccess(user)
+        if (form[0].role.value) {
+            const validations = validationChooser[form[0].role.value]
+
+            const valid = validateForm(validations)
+
+            console.log(valid)
+
+            if (valid) {
+                const userData = {}
+                const template = templateChooser[form[0].role.value]
+
+                for (let i = 0; i < template.length; i++) {
+                    const currentKey = template[i];
+                    console.log(currentKey)
+                    userData[currentKey] = form[0][currentKey].value
+                    console.log(form[0][currentKey].value)
                 }
-            } catch (error) {
-                handleError(error)
+
+                console.log(userData)
+                try {
+                    firebase.upsertUser({data: {...userData, password: '123456'}}).then(res => handleOnCompleted())
+                } catch(error) {
+                    console.log(error)
+                }
             }
         }
     }
@@ -145,7 +179,7 @@ function UpsertUser({history, firebase}) {
                 <BasicAutocomplete
                     dispatchValue={dispatchValue}
                     mapperKey="role"
-                    label="Role"
+                    label="Rol"
                     value={form[0].role.value}
                     errorText={form[0].role.error}
                     options={roleOptions}
@@ -171,7 +205,7 @@ function UpsertUser({history, firebase}) {
                     mapperKey="lastName"
                 />
             </Grid>
-            {form[0].role.value === 'ALUMNO' && (
+            {form[0].role.value === 'STUDENT' && (
                 <Grid item xs={12} className={classes.field}>
                     <FormLabel component="legend">Género</FormLabel>
                     <RadioGroup aria-label="gender" name="gender1" value={value} onChange={handleChange}>
@@ -181,7 +215,7 @@ function UpsertUser({history, firebase}) {
                     </RadioGroup>
                 </Grid>
             )}
-            {form[0].role.value !== 'PARENT' && (
+            {form[0].role.value !== 'STUDENT' && (
                 <Grid item xs={12} className={classes.field}>
                     <BasicInput
                         label="Telefono"
@@ -192,7 +226,7 @@ function UpsertUser({history, firebase}) {
                     />
                 </Grid>
             )}
-            {form[0].role.value !== 'ALUMNO' && (
+            {form[0].role.value !== 'STUDENT' && (
                 <Grid item xs={12} className={classes.field}>
                     <BasicInput
                         label="Email"
@@ -203,19 +237,19 @@ function UpsertUser({history, firebase}) {
                     />
                 </Grid>
             )}
-            {(form[0].role.value === 'ALUMNO' || form[0].role.value === 'INSTRUCTOR') && (
+            {(form[0].role.value === 'STUDENT' || form[0].role.value === 'INSTRUCTOR') && (
                 <Grid item xs={12} className={classes.field}>
                     <BasicInput
                         id="date"
                         value={form[0].birthday.value}
                         dispatchValue={dispatchValue}
-                        label="Fecha de nacimiento"
                         type="date"
                         errorText={form[0].birthday.error}
+                        mapperKey={'birthday'}
                     />
                 </Grid>
             )}
-            {form[0].role.value === 'PADRE' && (
+            {form[0].role.value === 'PARENT' && (
                 <Grid item xs={12} className={classes.field}>
                     <BasicInput
                         label="Datos fiscales"
@@ -226,7 +260,7 @@ function UpsertUser({history, firebase}) {
                     />
                 </Grid>
             )}
-            {(form[0].role.value === 'ALUMNO' || form[0].role.value === 'PADRE') && (
+            {(form[0].role.value === 'STUDENT' || form[0].role.value === 'PARENT') && (
                 <Grid item xs={12} className={classes.field}>
                     <BasicInput
                         label="Direccion"
@@ -237,7 +271,7 @@ function UpsertUser({history, firebase}) {
                     />
                 </Grid>
             )}
-            {form[0].role.value === 'ALUMNO' && (
+            {form[0].role.value === 'STUDENT' && (
                 <Grid item xs={12} className={classes.field}>
                     {/* //direccion */}
                     <BasicInput

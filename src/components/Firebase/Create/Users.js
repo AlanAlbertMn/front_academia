@@ -9,3 +9,7 @@ export const createParent = async ({ firebase, data }) => {
         parent: newParent
     }
 }
+
+export const createUser = async ({firebase, data}) => {
+    return await firebase.db.collection('users').add({...data})
+}

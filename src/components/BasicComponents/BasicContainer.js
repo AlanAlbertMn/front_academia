@@ -11,7 +11,7 @@ import { deepPurple } from "../../utils/colors";
 const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: 700,
-    height: "100vh",
+    height: '100vh',
     maxHeight: "auto",
     padding: "100px 50px 100px 50px",
     zIndex: "-1",

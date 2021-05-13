@@ -34,9 +34,9 @@ const BasicAutocomplete = memo(
                    onInputChange={(event, newInputValue) => {
                        setInputValue(newInputValue);
                    }}
-                   filterSelectedOptions
+                   filterSelectedOptions={multiple}
                    getOptionLabel={(option) => {
-                       if (multiple) {
+                       if (multiple === true) {
                            return option?.name || option
                        } else if (
                            option !== null &&
@@ -58,7 +58,7 @@ const BasicAutocomplete = memo(
                        }
                    }}
                    getOptionSelected={(option, value) => {
-                       if(!multiple) {
+                       if(multiple === false) {
                            if (value === "") {
                                return true;
                            } else {

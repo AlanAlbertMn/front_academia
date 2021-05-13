@@ -3,6 +3,7 @@ import { useReducer } from "react";
 import validate from "validate.js";
 
 const formValidation = ({ form, dispatchForm, validations }) => {
+  console.log('LAS VALIDACIONES SON ', validations)
   let valid = true;
   for (let index = 0; index < form.length; index++) {
     const row = form[index];
@@ -18,6 +19,7 @@ const formValidation = ({ form, dispatchForm, validations }) => {
               index,
               key,
             });
+            console.log(field)
             valid = false;
           }
         }

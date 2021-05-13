@@ -1,5 +1,6 @@
 import {
-    createParent
+    createParent,
+    createUser
 } from './Users'
 import  {
     createActivity
@@ -7,5 +8,6 @@ import  {
 
 export {
     createParent,
-    createActivity
+    createActivity,
+    createUser
 }

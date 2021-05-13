@@ -4,7 +4,7 @@ import 'firebase/firestore'
 import {
     getUser,
     getActivities,
-    getInstructors, getActivity, getStudents
+    getInstructors, getActivity, getStudents, getUsers
 } from "./readOperations";
 
 import {
@@ -17,7 +17,8 @@ import {
 
 import {
     login,
-    signUp, upsertActivity
+    signUp, upsertActivity,
+    upsertUser,
 } from "./complexOperations";
 import {addActivity} from "./createOperations";
 
@@ -70,10 +71,13 @@ class Firebase {
 
     getInstructors = () => getInstructors({firebase: this})
 
+    getUsers = () => getUsers({firebase: this})
 
     upsertActivity = ({data}) => upsertActivity({firebase: this, data})
 
     getStudents = () => getStudents({firebase: this})
+
+    upsertUser = ({data}) => upsertUser({firebase: this, data})
 
     doPasswordUpdate = password =>
         this.auth.currentUser.updatePassword(password);

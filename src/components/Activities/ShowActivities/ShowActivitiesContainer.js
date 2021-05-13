@@ -12,11 +12,11 @@ const loadActivities = async ({firebase}) => {
     let activities = []
     const activitiesFromServer = await firebase.getActivities()
 
-
     if (activitiesFromServer && Array.isArray(activitiesFromServer)) activities = activitiesFromServer.map(activity => ({
         ...activity,
         instructors: activity.instructors.map(instructor => instructor.name).join(' | ')
     }))
+
     return activities
 }
 

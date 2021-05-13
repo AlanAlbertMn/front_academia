@@ -10,7 +10,14 @@ export const permissionsByModule = {
     incriptions: {
         read: ['ADMIN', 'INSTRUCTOR'],
         create: ['ADMIN'],
-        update: ['ADMIN'],
+        edit: ['ADMIN'],
+        subscribe: ['ADMIN'],
+        delete: ['ADMIN']
+    },
+    users: {
+        read: ['ADMIN'],
+        create: ['ADMIN'],
+        edit: ['ADMIN'],
         subscribe: ['ADMIN'],
         delete: ['ADMIN']
     }

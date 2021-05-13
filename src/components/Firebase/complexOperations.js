@@ -2,14 +2,15 @@ import {
     readUser
 } from "./Read";
 
-import  {
+import {
     createParent,
-    createActivity
+    createActivity,
+    createUser,
 } from "./Create";
-import {updateActivity} from "./Update";
+import {updateActivity, updateUser} from "./Update";
 
 
-export const login =  async ({firebase, email, password}) => {
+export const login = async ({firebase, email, password}) => {
     try {
         await firebase.doSignInWithEmailAndPassword(email, password)
 
@@ -24,7 +25,7 @@ export const login =  async ({firebase, email, password}) => {
     }
 }
 
-export const signUp = async({firebase, data}) => {
+export const signUp = async ({firebase, data}) => {
     try {
         await firebase.auth.createUserWithEmailAndPassword(data.email, data.password);
         await createParent({firebase, data})
@@ -36,11 +37,22 @@ export const signUp = async({firebase, data}) => {
 }
 
 
-export const upsertActivity = async({firebase, data}) => {
+export const upsertActivity = async ({firebase, data}) => {
     if (data.id && data.shouldUpdate) {
         return updateActivity({firebase, data})
-    }
-    else {
+    } else {
         return createActivity({firebase, data})
+    }
+}
+
+export const upsertUser = async ({firebase, data}) => {
+    if (data.id) {
+
+        return updateUser({firebase, data})
+    } else {
+        return firebase.auth.createUserWithEmailAndPassword(data.email, data.password).then(res => createUser({
+            firebase,
+            data
+        }))
     }
 }

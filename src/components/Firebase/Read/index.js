@@ -1,6 +1,7 @@
 import {
     readUser,
-    readInstructors
+    readInstructors,
+    readUsers
 } from "./Users";
 
 import {
@@ -18,4 +19,5 @@ export {
     readActivity,
     readActivities,
     readStudents,
-}
+    readUsers,
+};

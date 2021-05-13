@@ -106,7 +106,7 @@ const BasicTable = memo(
             if (handleAdd && typeof handleAdd === 'function') {
                 handleAdd()
             } else if (addLink) {
-                history.replace(addLink);
+                history.push(addLink);
             }
         };
         const handleChangePage = (event, newPage) => {
@@ -192,7 +192,7 @@ const BasicTable = memo(
                                                                     </BasicButton>
                                                                 }
                                                                 {
-                                                                    permissions.delete &&
+                                                                    permissions.delete && (customDelete || deleteMutation) &&
                                                                     <BasicButton
                                                                         color='primary'
                                                                         handleClick={() => handleDelete(row.id)}
