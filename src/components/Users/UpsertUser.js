@@ -17,7 +17,7 @@ import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {withFirebase} from '../Firebase';
 
-const studentTemplate = ['name', 'lastName', 'gender', 'birthday', 'address', 'inscriptionDate', 'medicalData', 'role']
+const studentTemplate = ['name', 'lastName', 'birthday', 'address', 'inscriptionDate', 'medicalData', 'role', 'email']
 
 const parentTemplate = ['name', 'lastName', 'phone', 'email', 'taxData', 'role']
 
@@ -226,19 +226,18 @@ function UpsertUser({history, firebase}) {
                     />
                 </Grid>
             )}
-            {form[0].role.value !== 'STUDENT' && (
-                <Grid item xs={12} className={classes.field}>
-                    <BasicInput
-                        label="Email"
-                        value={form[0].email.value}
-                        errorText={form[0].email.error}
-                        dispatchValue={dispatchValue}
-                        mapperKey="email"
-                    />
-                </Grid>
-            )}
+            <Grid item xs={12} className={classes.field}>
+                <BasicInput
+                    label="Email"
+                    value={form[0].email.value}
+                    errorText={form[0].email.error}
+                    dispatchValue={dispatchValue}
+                    mapperKey="email"
+                />
+            </Grid>
             {(form[0].role.value === 'STUDENT' || form[0].role.value === 'INSTRUCTOR') && (
                 <Grid item xs={12} className={classes.field}>
+                    <Typography>Fecha de nacimiento</Typography>
                     <BasicInput
                         id="date"
                         value={form[0].birthday.value}
@@ -246,6 +245,20 @@ function UpsertUser({history, firebase}) {
                         type="date"
                         errorText={form[0].birthday.error}
                         mapperKey={'birthday'}
+                    />
+                </Grid>
+            )}
+            {(form[0].role.value === 'STUDENT') && (
+
+                <Grid item xs={12} className={classes.field}>
+                    <Typography>Fecha de inscripción</Typography>
+                    <BasicInput
+                        id="date"
+                        value={form[0].inscriptionDate.value}
+                        dispatchValue={dispatchValue}
+                        type="date"
+                        errorText={form[0].inscriptionDate.error}
+                        mapperKey={'inscriptionDate'}
                     />
                 </Grid>
             )}

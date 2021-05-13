@@ -7,7 +7,7 @@ const routes = [
     {
         path: '/actividades',
         component: ShowActivities,
-        roles: ['ADMIN'],
+        roles: ['ADMIN', 'INSTRUCTOR', 'STUDENT'],
         name: 'Actividades',
         shouldAppear: true
     },
@@ -28,7 +28,7 @@ const routes = [
     {
         path: '/inscripciones/:activity',
         component:ShowInscriptions,
-        roles: ['ADMIN'],
+        roles: ['ADMIN', 'INSTRUCTOR'],
         name: 'Inscripciones',
         shouldAppear: false
     },

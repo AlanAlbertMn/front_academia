@@ -1,5 +1,8 @@
 import {
-    readUser
+    readActivities,
+    readUser,
+    readActivitiesFromStudent,
+    readActivitiesFromInstructor
 } from "./Read";
 
 import {
@@ -8,7 +11,6 @@ import {
     createUser,
 } from "./Create";
 import {updateActivity, updateUser} from "./Update";
-
 
 export const login = async ({firebase, email, password}) => {
     try {
@@ -47,12 +49,26 @@ export const upsertActivity = async ({firebase, data}) => {
 
 export const upsertUser = async ({firebase, data}) => {
     if (data.id) {
-
         return updateUser({firebase, data})
-    } else {
+    } else if (data.email) {
         return firebase.auth.createUserWithEmailAndPassword(data.email, data.password).then(res => createUser({
             firebase,
             data
         }))
+    } else {
+        return createUser({
+            firebase,
+            data
+        })
+    }
+}
+
+export const getActivitiesByRole = async ({firebase, id, role}) => {
+    if (role === 'ADMIN') {
+        return readActivities({firebase})
+    } else if (role === 'STUDENT') {
+        return readActivitiesFromStudent({firebase, id})
+    } else if (role === 'INSTRUCTOR') {
+        return readActivitiesFromInstructor({firebase, id})
     }
 }

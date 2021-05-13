@@ -17,11 +17,11 @@ import {
 export const studentValidation = {
     name: nameRequired,
     lastName: lastNameRequired,
-    gender: genderRequired,
     birthday: birthdayRequired,
     medicalData: medicalDataRequired,
     address: addressRequired,
     role: roleRequired,
+    email       ,
     inscriptionDate: inscriptionDateRequired
 }
 
