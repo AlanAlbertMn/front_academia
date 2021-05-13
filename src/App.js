@@ -3,6 +3,7 @@ import './App.css';
 
 import Navbar from './components/Navbar/Navbar';
 import AppContext from './components/Context/AppContext';
+import {getUserRoutes} from "./utils/utils";
 
 function AppProvider(user) {
 	this.user = user;
@@ -14,7 +15,6 @@ function AppProvider(user) {
 	};
 
 	this.setUser = (newUser) => {
-		console.log(newUser);
 		this.user = newUser;
 	};
 
@@ -31,7 +31,7 @@ function AppProvider(user) {
 	};
 }
 
-function App() {
+function App({history}) {
 	const appProvider = useMemo(
 		() =>
 			new AppProvider({
@@ -45,7 +45,9 @@ function App() {
 	const localUser = localStorage.getItem('academia-user');
 
 	if (localUser) {
-		appProvider.setUser(JSON.parse(localUser));
+		const storedUser = JSON.parse(localUser)
+		appProvider.setUser(storedUser);
+		appProvider.setRoutes(getUserRoutes(storedUser))
 	}
 
 	return (

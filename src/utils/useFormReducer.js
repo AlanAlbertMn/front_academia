@@ -3,6 +3,7 @@ import { useReducer } from "react";
 import validate from "validate.js";
 
 const formValidation = ({ form, dispatchForm, validations }) => {
+  console.log('LAS VALIDACIONES SON ', validations)
   let valid = true;
   for (let index = 0; index < form.length; index++) {
     const row = form[index];
@@ -18,6 +19,7 @@ const formValidation = ({ form, dispatchForm, validations }) => {
               index,
               key,
             });
+            console.log(field)
             valid = false;
           }
         }
@@ -54,6 +56,9 @@ const reducer = (prevState, action) => {
       return newState;
     case "reset":
       return action.resetState;
+
+    case "set":
+      return action.newState
     case "validateField":
       const validatedArr = Array.from(prevState);
       validatedArr[action.index][action.key].error = action.error;
@@ -66,11 +71,11 @@ const reducer = (prevState, action) => {
 const useFormReducer = ({ initialState, validations }) => {
   const [form, dispatchForm] = useReducer(reducer, initialState);
 
-  const validateForm = () => {
+  const validateForm = (customValidations) => {
     const valid = formValidation({
       form,
       dispatchForm,
-      validations,
+      validations: customValidations ? customValidations : validations,
     });
 
     return valid;

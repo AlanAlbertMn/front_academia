@@ -7,6 +7,8 @@ import { utils } from '../../utils';
 import AppContext from '../Context/AppContext';
 import Login from '../Login/Login';
 import BasicAlert from '../BasicComponents/BasicAlert';
+import { compose } from 'recompose'
+import {withFirebase} from "../Firebase";
 
 const useStyles = makeStyles((theme) => ({
 	button: {
@@ -22,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 // Handles all client routes
-const Navbar = ({ history, _providerInstance }) => {
+const Navbar = ({ history, _providerInstance, firebase }) => {
 	const classes = useStyles();
 	const appProvider = useContext(AppContext);
 	const [alert, handleAlert] = useState({
@@ -32,13 +34,15 @@ const Navbar = ({ history, _providerInstance }) => {
 
 	// Deletes localstorage and resets the appProvider
 	const handleLogout = () => {
-		appProvider.setUser({});
-		appProvider.setRoutes([]);
-		localStorage.clear();
-		history.replace('/');
+		firebase.doSignOut().then(res => {
+			appProvider.setUser({});
+			appProvider.setRoutes([]);
+			localStorage.clear();
+			history.replace('/');
+		})
 	};
 
-	const [currentRoute, setCurrentRoute] = useState('/home');
+	const [currentRoute, setCurrentRoute] = useState('/actividades');
 
 	// Set the route based on button clicked
 	const handleRouteChange = (newRoute) => {
@@ -96,4 +100,4 @@ const Navbar = ({ history, _providerInstance }) => {
 	);
 };
 
-export default withRouter(Navbar);
+export default compose(withRouter, withFirebase)(Navbar)
