@@ -10,8 +10,9 @@ import {
     createParent,
     createActivity,
     createUser,
+    createProduct,
 } from "./Create";
-import {updateActivity, updateUser} from "./Update";
+import {updateActivity, updateUser, updateProduct} from "./Update";
 
 export const login = async ({firebase, email, password}) => {
     try {
@@ -45,6 +46,14 @@ export const upsertActivity = async ({firebase, data}) => {
         return updateActivity({firebase, data})
     } else {
         return createActivity({firebase, data})
+    }
+}
+
+export const upsertProduct = async ({firebase, data}) => {
+    if (data.id && data.shouldUpdate) {
+        return updateProduct({firebase, data})
+    } else {
+        return createProduct({firebase, data})
     }
 }
 

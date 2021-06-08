@@ -4,11 +4,12 @@ import 'firebase/firestore'
 import {
     getUser,
     getActivities,
-    getInstructors, getActivity, getStudents, getUsers
+    getInstructors, getActivity, getStudents, getUsers,
+    getProducts, getProduct
 } from "./readOperations";
 
 import {
-    removeActivity
+    removeActivity, removeProduct
 } from './deleteOperations'
 
 import {
@@ -19,9 +20,10 @@ import {
     login,
     signUp, upsertActivity,
     upsertUser,
-    getActivitiesByRole
+    getActivitiesByRole,
+    upsertProduct
 } from "./complexOperations";
-import {addActivity} from "./createOperations";
+import {addActivity, addProduct} from "./createOperations";
 
 
 const config = {
@@ -81,6 +83,17 @@ class Firebase {
     getStudents = () => getStudents({firebase: this})
 
     upsertUser = ({data}) => upsertUser({firebase: this, data})
+
+    addProduct = ({data}) => addProduct({firebase: this, data})
+
+    getProducts = () => getProducts({firebase: this})
+
+    getProduct = ({id}) => getProduct({firebase: this, id})
+
+    removeProduct = ({id}) => removeProduct({firebase: this, id})
+
+    upsertProduct = ({data}) => upsertProduct({firebase: this, data})
+
 
     doPasswordUpdate = password =>
         this.auth.currentUser.updatePassword(password);

@@ -196,3 +196,23 @@ export const scheduleRequired = {
                 : '^*El horario es requerido'
     }
 }
+
+export const periodRequired = {
+    presence: {
+        allowEmpty: false,
+        message:
+            language === 'en'
+                ? '^*The period is required'
+                : '^*La periocidad es requerida'
+    }
+}
+
+export const typeRequired = {
+    presence: {
+        allowEmpty: false,
+        message:
+            language === 'en'
+                ? '^*The type is required'
+                : '^*El tipo es requerido'
+    }
+}

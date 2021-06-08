@@ -1,7 +1,11 @@
 import {
     deleteActivity
-} from "./Activity";
+} from "./Activity"
+import {
+    deleteProduct
+} from "./Product";
 
 export {
-    deleteActivity
+    deleteActivity,
+    deleteProduct
 }

@@ -16,6 +16,13 @@ import {
     readStudents
 } from "./Users";
 
+import {
+    readProduct,
+    readProducts,
+    readProductsFromStudent,
+    readProductsFromInstructor,
+} from "./Products";
+
 export {
     readUser,
     readInstructors,
@@ -25,5 +32,9 @@ export {
     readUsers,
     readActivitiesFromStudent,
     readUserWithEmail,
-    readActivitiesFromInstructor
+    readActivitiesFromInstructor,
+    readProduct,
+    readProducts,
+    readProductsFromStudent,
+    readProductsFromInstructor
 };

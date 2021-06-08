@@ -4,10 +4,14 @@ import {
 } from './Users'
 import  {
     createActivity
-} from "./Activities";
+} from "./Activities"
+import  {
+    createProduct
+} from "./Products";
 
 export {
     createParent,
     createActivity,
-    createUser
+    createUser,
+    createProduct
 }
