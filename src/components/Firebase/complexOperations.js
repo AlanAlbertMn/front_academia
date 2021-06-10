@@ -10,7 +10,8 @@ import {
     createParent,
     createActivity,
     createUser,
-    createProduct
+    createProduct,
+
 } from "./Create";
 
 import {updateActivity, updateUser, updateProduct} from "./Update";
@@ -21,24 +22,22 @@ import {extendMoment} from "moment-range";
 
 const moment = extendMoment(Moment)
 
-const getSalesFromDay = (salesSnapshot, productsSnapshot) => {
+const getSalesFromDay = async (salesSnapshot, productsSnapshot, firebase) => {
     const salesFromDay = []
     const productsIds = {}
 
-    productsSnapshot.forEach(product => {
+
+    await productsSnapshot.forEach(product => {
         productsIds[product.id] = true
+        const nextRenovation = moment(product.lastRenovation).add(product.renovationSpan, unitsMapper[product.renovationUnit]).format('yyyy-MM-DD')
+        firebase.db.collection('products').doc(product.id).update({nextRenovation})
     })
 
-    console.log(productsIds)
-
     salesSnapshot.forEach(sale => {
-        console.log(sale.data())
-        if (productsIds[sale.data().product.id] === true){
+        if (productsIds[sale.data().product.id] === true) {
             salesFromDay.push(sale)
         }
     })
-
-    console.log(salesFromDay)
 
     return salesFromDay
 }
@@ -109,34 +108,31 @@ export const getSalesFromInterval = async ({after, before, firebase}) => {
     })
 }
 
+const sendEmail = async ({firebase, email, product, to_name}) => {
+    await firebase.mailServer.sendMail({
+        email,
+        message: `Se ha registrado la compra de ${product}`,
+        to_name,
+        template: 'purchase'
+    })
+}
 
-export const manageSalesFromDay = async({firebase}) => {
-    const currentDay = moment().format('yyyy-MM-DD')
-    const productsSnapshot = await firebase.db.collection('products').where('nextRenovation','==', currentDay.toString()).get();
+
+export const manageSalesFromDay = async ({firebase}) => {
+    const currentDay = moment().format(BASIC_DATE_FORMAT)
+    const productsSnapshot = await firebase.db.collection('products').where('nextRenovation', '==', currentDay.toString()).get();
     const salesSnapshot = await firebase.db.collection('sales').get()
 
-    const salesFromDay = getSalesFromDay(salesSnapshot, productsSnapshot)
-    console.log('llegando hasta aca');
+    const salesFromDay = await getSalesFromDay(salesSnapshot, productsSnapshot, firebase)
 
     salesFromDay.forEach(doc => {
-        console.log(doc.data());
+        registerSale({firebase, ...doc.data()}).then(res => sendEmail({
+            email: doc.data().student.email,
+            product: doc.data().product.name,
+            firebase,
+            to_name: doc.data().student.name
+        }))
     })
-
-    // if (productsSnapshot.empty) {
-    //     console.log('no hay')
-    //     return []
-    // } else {
-    //     await salesSnapshot.forEach(doc => {
-    //         const docData = doc.data()
-    //
-    //         const nextRenovation = moment(docData.lastRenovation).add(docData.renovationSpan, unitsMapper[docData.renovationUnit]).format('yyyy-MM-DD')
-    //
-    //         doc.update({nextRenovation})
-    //
-    //         console.log('CRON executed')
-    //     })
-    //     return
-    // }
 }
 
 export const upsertUser = async ({firebase, data}) => {
@@ -172,7 +168,7 @@ export const registerSale = async ({firebase, product, student, quantity}) => {
         await firebase.db.runTransaction(async t => {
             const productToRead = await t.get(productRef)
 
-            const productData = productToRead.data()
+            const productData = {...productToRead.data(), id: productToRead.id}
 
             const previousQuantity = parseInt(productData.quantity)
 
@@ -181,7 +177,7 @@ export const registerSale = async ({firebase, product, student, quantity}) => {
             if (previousQuantity >= parsedQuantity) {
                 await t.update(productRef, {quantity: previousQuantity - parsedQuantity})
                 await t.set(salesRef, {
-                    product: productToRead.data(),
+                    product: productData,
                     student,
                     quantity,
                     total: quantity * productToRead.data().cost,

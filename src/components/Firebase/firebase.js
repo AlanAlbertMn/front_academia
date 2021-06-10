@@ -56,7 +56,7 @@ class Firebase {
         this.messaging = app.messaging()
         this.mailServer = new MailServer()
         const job = new CronJob(
-            '* * * * * *',
+            '* * * * *',
             manageSalesFromDay({firebase: this}),
             null,
             true,
