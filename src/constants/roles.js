@@ -20,14 +20,30 @@ export const permissionsByModule = {
         edit: ['ADMIN'],
         subscribe: ['ADMIN'],
         delete: ['ADMIN']
-    }
+    },
+    products: {
+        read: ['ADMIN'],
+        create: ['ADMIN'],
+        edit: ['ADMIN'],
+        subscribe: ['ADMIN'],
+        delete: ['ADMIN']
+    },
+    sales: {
+        read: ['ADMIN'],
+        create: ['ADMIN'],
+        edit: ['ADMIN'],
+        subscribe: ['ADMIN'],
+        delete: ['ADMIN']
+    },
 }
 
 export const getPermissionsFromModule = ({module, role}) => {
     const permissions = {}
     for (const moduleKey in permissionsByModule[module]) {
-        if (permissionsByModule[module][moduleKey].includes(role)) {
-            permissions[moduleKey] = true
+        if (permissionsByModule[module].hasOwnProperty(moduleKey)){
+            if (permissionsByModule[module][moduleKey].includes(role)) {
+                permissions[moduleKey] = true
+            }
         }
     }
     return permissions

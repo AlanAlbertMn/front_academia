@@ -1,17 +1,20 @@
 import {
     readActivities,
-    readUser,
     readUserWithEmail,
     readActivitiesFromStudent,
-    readActivitiesFromInstructor
+    readActivitiesFromInstructor,
 } from "./Read";
 
 import {
     createParent,
     createActivity,
     createUser,
+    createProduct
 } from "./Create";
-import {updateActivity, updateUser} from "./Update";
+
+import {updateActivity, updateUser, updateProduct} from "./Update";
+
+import moment from 'moment'
 
 export const login = async ({firebase, email, password}) => {
     try {
@@ -39,12 +42,19 @@ export const signUp = async ({firebase, data}) => {
     }
 }
 
-
 export const upsertActivity = async ({firebase, data}) => {
     if (data.id && data.shouldUpdate) {
         return updateActivity({firebase, data})
     } else {
         return createActivity({firebase, data})
+    }
+}
+
+export const upsertProduct = async ({firebase, data}) => {
+    if (data.id) {
+        return updateProduct({firebase, data})
+    } else {
+        return createProduct({firebase, data})
     }
 }
 
@@ -71,5 +81,29 @@ export const getActivitiesByRole = async ({firebase, id, role}) => {
         return readActivitiesFromStudent({firebase, id})
     } else if (role === 'INSTRUCTOR') {
         return readActivitiesFromInstructor({firebase, id})
+    }
+}
+
+export const registerSale = async ({firebase, product, student, quantity}) => {
+    const productRef = firebase.db.collection('products').doc(product.id)
+    const salesRef = firebase.db.collection('sales').doc()
+
+    try {
+        await firebase.db.runTransaction(async t => {
+            const productToRead = await t.get(productRef)
+
+            if (productToRead.data().quantity >= quantity) {
+                await t.update(productRef, {quantity: productToRead.data().quantity - quantity})
+                await t.set(salesRef, {
+                    product: productToRead.data(),
+                    student,
+                    quantity,
+                    total: quantity * productToRead.data().cost,
+                    date: moment().format()
+                })
+            }
+        })
+    } catch (error) {
+        console.log(error)
     }
 }

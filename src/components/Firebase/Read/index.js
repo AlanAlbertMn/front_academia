@@ -13,8 +13,18 @@ import {
 } from "./Activities";
 
 import {
+    readProducts,
+    readProduct
+} from "./Products";
+
+import {
     readStudents
 } from "./Users";
+
+import {
+    readSales,
+    readSale
+} from "./Sales";
 
 export {
     readUser,
@@ -25,5 +35,9 @@ export {
     readUsers,
     readActivitiesFromStudent,
     readUserWithEmail,
-    readActivitiesFromInstructor
+    readActivitiesFromInstructor,
+    readProducts,
+    readProduct,
+    readSale,
+    readSales
 };

@@ -6,8 +6,18 @@ import  {
     createActivity
 } from "./Activities";
 
+import {
+    createProduct
+} from "./Products";
+
+import {
+    createSale
+} from "./Sales";
+
 export {
     createParent,
     createActivity,
-    createUser
+    createUser,
+    createSale,
+    createProduct
 }

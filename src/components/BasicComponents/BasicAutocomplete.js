@@ -5,23 +5,28 @@ import Typography from '@material-ui/core/Typography'
 
 import _ from 'lodash'
 
+const determineValue = ({multiple, newValue, raw}) => {
+    if (raw === true || multiple === true) return newValue
+
+    return newValue?.id
+}
 
 const BasicAutocomplete = memo(
-    ({label, value, mapperKey, dispatchValue, errorText, multiple = false, options = [], ...rest}) => {
+    ({raw=false, label, value, mapperKey, dispatchValue, errorText, multiple = false, options = [], ...rest}) => {
         const [inputValue, setInputValue] = React.useState("");
 
         return (
            <>
                <Autocomplete
                    multiple={multiple}
-                   error={!!errorText}
+                   //error={!!errorText}
                    value={value}
                    noOptionsText="Sin opciones"
                    onChange={(event, newValue) => {
                        if (newValue) {
                            dispatchValue({
                                key: mapperKey,
-                               value: multiple ? newValue : newValue?.id
+                               value: determineValue({ multiple, newValue, raw })
                            });
                        } else {
                            dispatchValue({

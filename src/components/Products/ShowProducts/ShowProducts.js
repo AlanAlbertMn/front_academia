@@ -8,19 +8,18 @@ import AppContext from '../../Context/AppContext';
 import {compose} from 'recompose';
 import {withFirebase} from '../../Firebase';
 
-const loadActivities = async ({firebase, id, role}) => {
-    let activities = []
-    const activitiesFromServer = await firebase.getActivitiesByRole({id, role})
+const loadProducts = async ({firebase}) => {
+    let finalProducts = []
+    const products = await firebase.getProducts()
 
-    if (activitiesFromServer && Array.isArray(activitiesFromServer)) activities = activitiesFromServer.map(activity => ({
-        ...activity,
-        instructors: activity.instructors.map(instructor => instructor.name).join(' | ')
+    if (products && Array.isArray(products)) finalProducts = products.map(product => ({
+        ...product,
     }))
-    return activities
+    return finalProducts
 }
 
 function ShowActivitiesContainer({history, firebase}) {
-    const [activities, setActivities] = useState([])
+    const [products, setProducts] = useState([])
     const appProvider = useContext(AppContext);
 
     const handleEdit = (id) => {
@@ -32,11 +31,11 @@ function ShowActivitiesContainer({history, firebase}) {
     }
 
     useEffect(() => {
-        loadActivities({firebase, id: appProvider.user, role: appProvider.user.role}).then(res => setActivities(res))
+        loadProducts({firebase}).then(res => setProducts(res))
     }, [firebase, appProvider])
 
     const refetch = () => {
-        loadActivities({firebase, id: appProvider.user, role: appProvider.user.role}).then(res => setActivities(res))
+        loadProducts({firebase}).then(res => setProducts(res))
     }
 
     return (
@@ -46,11 +45,11 @@ function ShowActivitiesContainer({history, firebase}) {
                 title={content.title}
                 history={history}
                 addLink={content.addLink}
-                data={activities}
+                data={products}
                 content={content}
                 handleEdit={handleEdit}
                 refetch={refetch}
-                deleteMutation={firebase.removeActivity}
+                deleteMutation={firebase.removeProduct}
                 handleExtraAction={handleStudents}
                 role={appProvider.user.role}
             />

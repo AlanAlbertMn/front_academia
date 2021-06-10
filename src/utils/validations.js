@@ -30,6 +30,13 @@ export const codeRequired = {
     },
 };
 
+export const dateRequired = {
+    presence: {
+        allowEmpty: false,
+        message: '^La fecha es requerida'
+    }
+}
+
 export const instructorsRequired = {
     presence: {
         allowEmpty: false,
@@ -130,6 +137,21 @@ export const studentRequired = {
 export const userLogin = {
     ...user,
 };
+
+export const productRequired = {
+    presence: {
+        allowEmpty: false,
+        message: '^El producto es requerido'
+    }
+}
+
+export const quantityRequired = {
+    presence: {
+        allowEmpty: false,
+        message: '^La cantidad es requerida'
+    }
+}
+
 
 export const roleRequired = {
     presence: {

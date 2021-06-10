@@ -3,7 +3,6 @@ import { useReducer } from "react";
 import validate from "validate.js";
 
 const formValidation = ({ form, dispatchForm, validations }) => {
-  console.log('LAS VALIDACIONES SON ', validations)
   let valid = true;
   for (let index = 0; index < form.length; index++) {
     const row = form[index];
@@ -19,7 +18,6 @@ const formValidation = ({ form, dispatchForm, validations }) => {
               index,
               key,
             });
-            console.log(field)
             valid = false;
           }
         }
@@ -47,22 +45,25 @@ const reducer = (prevState, action) => {
       let error =
         errors && errors.length > 0 ? errors[errors.length - 1] : null;
 
-      const valid = error !== null ? false : true;
+      const valid = error === null
 
       newState[action.index][action.key].error = error;
       newState[action.index][action.key].valid = valid;
       newState[action.index][action.key].value = action.value;
 
       return newState;
+
     case "reset":
       return action.resetState;
 
     case "set":
       return action.newState
+
     case "validateField":
       const validatedArr = Array.from(prevState);
       validatedArr[action.index][action.key].error = action.error;
       return validatedArr;
+
     default:
       return [...prevState];
   }
@@ -72,14 +73,26 @@ const useFormReducer = ({ initialState, validations }) => {
   const [form, dispatchForm] = useReducer(reducer, initialState);
 
   const validateForm = (customValidations) => {
-    const valid = formValidation({
+    return formValidation({
       form,
       dispatchForm,
       validations: customValidations ? customValidations : validations,
     });
-
-    return valid;
   };
+
+  const getValues = () => {
+    return form.map(child => {
+      const reducedChild = {}
+
+      for (const childKey in child) {
+        if (child.hasOwnProperty(childKey)){
+          reducedChild[childKey] = child[childKey].value
+        }
+      }
+
+      return reducedChild
+    })
+  }
 
   const updateForm = ({ index, value, key }) => {
     dispatchForm({
@@ -97,7 +110,8 @@ const useFormReducer = ({ initialState, validations }) => {
       resetState: initialState,
     });
   };
-  return [form, dispatchForm, { validateForm, updateForm, resetForm }];
+
+  return [form, dispatchForm, { validateForm, updateForm, resetForm, getValues }];
 };
 
 export default useFormReducer;

@@ -25,7 +25,6 @@ export const readActivitiesFromStudent = async ({firebase, id}) => {
 }
 
 export const readActivitiesFromInstructor = async({firebase, id}) => {
-    console.log('EL ID ENVIADO ES', id)
     const activitiesSnapshot = await firebase.db.collection('activities').where('instructors', 'array-contains', id).get();
 
     let formattedActivities = []

@@ -14,3 +14,23 @@ export const validations = {
     instructors: instructorsRequired,
     costPerHour: costRequired
 }
+
+export const renovationUnits = [
+    {
+        id: 'DAILY',
+        name: 'Diario'
+    },
+    {
+        id: 'WEEKLY',
+        name: 'Semanalmente'
+    },
+    {
+        id: 'MONTHLY',
+        name: 'Mensual'
+    },
+
+    {
+        id: 'YEARLY',
+        name: 'Anual'
+    }
+]

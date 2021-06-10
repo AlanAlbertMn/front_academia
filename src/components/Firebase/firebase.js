@@ -1,28 +1,39 @@
 import app from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore'
+import 'firebase/messaging'
 import {
     getUser,
     getActivities,
-    getInstructors, getActivity, getStudents, getUsers
+    getInstructors, getActivity, getStudents, getUsers,
+    getProducts,
+    getProduct,
+    getSale,
+    getSales
 } from "./readOperations";
 
 import {
-    removeActivity
+    removeActivity,
+    removeProduct,
+    removeSale
 } from './deleteOperations'
 
 import {
-    createParent
+    createParent,
 } from "./Create";
 
 import {
     login,
     signUp, upsertActivity,
     upsertUser,
-    getActivitiesByRole
+    getActivitiesByRole,
+    upsertProduct,
+    registerSale
 } from "./complexOperations";
-import {addActivity} from "./createOperations";
+import {addActivity, addSale} from "./createOperations";
+import MailServer from "../../utils/MailServer";
 
+const CronJob = require('cron').CronJob;
 
 const config = {
     apiKey: 'AIzaSyDafuw7JtD5gQy57nsG13Uw6mZ2FFt5NBY',
@@ -40,10 +51,30 @@ class Firebase {
         app.initializeApp(config);
         this.auth = app.auth();
         this.db = app.firestore()
+        this.messaging = app.messaging()
+        this.mailServer = new MailServer()
+        const job = new CronJob(
+            '* 1 * * * *',
+            function() {
+                console.log('You will see this message every second');
+            },
+            null,
+            true,
+            'America/Los_Angeles'
+        );
+
+        job.start()
+    }
+
+    enableMessaging = async () => {
+        try {
+            await this.messaging.getToken({vapidKey: 'BL3_uK5Nb5OBODRVEtiGpXUVwZsfCI2NdxmiPhajlL5bsiwCHSrCJLnARlxBcs8PpFSp--1_u0s_C4tXtgKLips'})
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     // *** Auth API ***
-
     doCreateUserWithEmailAndPassword = (email, password) =>
         this.auth.createUserWithEmailAndPassword(email, password);
 
@@ -66,6 +97,8 @@ class Firebase {
 
     removeActivity = ({id}) => removeActivity({firebase: this, id})
 
+    removeProduct = ({id}) => removeProduct({firebase: this, id})
+
     addParent = ({data}) => createParent({firebase: this, data})
 
     signUp = ({data}) => signUp({firebase: this, data})
@@ -81,6 +114,26 @@ class Firebase {
     getStudents = () => getStudents({firebase: this})
 
     upsertUser = ({data}) => upsertUser({firebase: this, data})
+
+    getProducts = () => getProducts({firebase: this})
+
+
+    upsertProduct = ({data}) => upsertProduct({firebase: this, data})
+
+    addSale = ({data}) => addSale({firebase: this, data})
+
+    removeSale = ({id}) => removeSale({firebase: this, id})
+
+    getSale = ({id}) => getSale({firebase: this, id})
+
+    getSales = () => getSales({firebase: this})
+
+    registerSale = ({product, student, quantity}) => registerSale({
+        firebase: this,
+        product,
+        student,
+        quantity
+    })
 
     doPasswordUpdate = password =>
         this.auth.currentUser.updatePassword(password);

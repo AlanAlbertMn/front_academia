@@ -6,7 +6,12 @@ import {
     updateUser
 } from "./Users";
 
+import {
+    updateProduct
+} from "./Products";
+
 export {
     updateActivity,
-    updateUser
+    updateUser,
+    updateProduct
 }

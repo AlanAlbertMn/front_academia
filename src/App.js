@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import './App.css';
 
 import Navbar from './components/Navbar/Navbar';
 import AppContext from './components/Context/AppContext';
 import {getUserRoutes} from "./utils/utils";
+import {withFirebase} from './components/Firebase'
 
 function AppProvider(user) {
 	this.user = user;
