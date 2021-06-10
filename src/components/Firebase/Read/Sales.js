@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 export const readSales = async ({firebase}) => {
     const salesSnapshot = await firebase.db.collection('sales').get();
 

@@ -3,6 +3,7 @@ import {
     readUserWithEmail,
     readActivitiesFromStudent,
     readActivitiesFromInstructor,
+    readSales, readProducts
 } from "./Read";
 
 import {
@@ -14,7 +15,33 @@ import {
 
 import {updateActivity, updateUser, updateProduct} from "./Update";
 
-import moment from 'moment'
+import Moment from 'moment'
+import {extendMoment} from "moment-range";
+
+
+const moment = extendMoment(Moment)
+
+const getSalesFromDay = (salesSnapshot, productsSnapshot) => {
+    const salesFromDay = []
+    const productsIds = {}
+
+    productsSnapshot.forEach(product => {
+        productsIds[product.id] = true
+    })
+
+    console.log(productsIds)
+
+    salesSnapshot.forEach(sale => {
+        console.log(sale.data())
+        if (productsIds[sale.data().product.id] === true){
+            salesFromDay.push(sale)
+        }
+    })
+
+    console.log(salesFromDay)
+
+    return salesFromDay
+}
 
 export const login = async ({firebase, email, password}) => {
     try {
@@ -58,6 +85,60 @@ export const upsertProduct = async ({firebase, data}) => {
     }
 }
 
+const BASIC_DATE_FORMAT = 'yyyy-MM-DD'
+
+const unitsMapper = {
+    DAILY: 'days',
+    WEEKLY: 'weeks',
+    MONTHLY: 'months',
+    YEARLY: 'years'
+}
+
+export const getSalesFromInterval = async ({after, before, firebase}) => {
+    const afterDate = moment(after)
+    const beforeDate = moment(before)
+
+    const range = moment().range(afterDate, beforeDate)
+
+    const sales = await readSales({firebase})
+
+    return sales.filter(sale => {
+        const saleDate = moment(sale.date)
+
+        return range.contains(saleDate)
+    })
+}
+
+
+export const manageSalesFromDay = async({firebase}) => {
+    const currentDay = moment().format('yyyy-MM-DD')
+    const productsSnapshot = await firebase.db.collection('products').where('nextRenovation','==', currentDay.toString()).get();
+    const salesSnapshot = await firebase.db.collection('sales').get()
+
+    const salesFromDay = getSalesFromDay(salesSnapshot, productsSnapshot)
+    console.log('llegando hasta aca');
+
+    salesFromDay.forEach(doc => {
+        console.log(doc.data());
+    })
+
+    // if (productsSnapshot.empty) {
+    //     console.log('no hay')
+    //     return []
+    // } else {
+    //     await salesSnapshot.forEach(doc => {
+    //         const docData = doc.data()
+    //
+    //         const nextRenovation = moment(docData.lastRenovation).add(docData.renovationSpan, unitsMapper[docData.renovationUnit]).format('yyyy-MM-DD')
+    //
+    //         doc.update({nextRenovation})
+    //
+    //         console.log('CRON executed')
+    //     })
+    //     return
+    // }
+}
+
 export const upsertUser = async ({firebase, data}) => {
     if (data.id) {
         return updateUser({firebase, data})
@@ -85,15 +166,20 @@ export const getActivitiesByRole = async ({firebase, id, role}) => {
 }
 
 export const registerSale = async ({firebase, product, student, quantity}) => {
-    const productRef = firebase.db.collection('products').doc(product.id)
-    const salesRef = firebase.db.collection('sales').doc()
-
+    const productRef = await firebase.db.collection('products').doc(product.id)
+    const salesRef = await firebase.db.collection('sales').doc()
     try {
         await firebase.db.runTransaction(async t => {
             const productToRead = await t.get(productRef)
 
-            if (productToRead.data().quantity >= quantity) {
-                await t.update(productRef, {quantity: productToRead.data().quantity - quantity})
+            const productData = productToRead.data()
+
+            const previousQuantity = parseInt(productData.quantity)
+
+            const parsedQuantity = parseInt(quantity)
+
+            if (previousQuantity >= parsedQuantity) {
+                await t.update(productRef, {quantity: previousQuantity - parsedQuantity})
                 await t.set(salesRef, {
                     product: productToRead.data(),
                     student,

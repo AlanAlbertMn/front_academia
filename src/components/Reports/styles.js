@@ -1,6 +1,6 @@
 import {makeStyles} from "@material-ui/core/styles";
 
-const useUpsertSaleStyles = makeStyles((theme) => ({
+const useReportGeneratorStyles = makeStyles((theme) => ({
     root: {
         minHeight: 1000,
         height: "100vh",
@@ -35,4 +35,4 @@ const useUpsertSaleStyles = makeStyles((theme) => ({
 }));
 
 
-export default useUpsertSaleStyles
+export default useReportGeneratorStyles

@@ -8,7 +8,7 @@ const unitsMapper = {
 }
 
 export const createProduct = async ({firebase, data}) => {
-    if (data.autorenovable === true) data.nextRenovation = moment(data.lastRenovation).add(data.renovationSpan, 'minutes').format('yyyy-MM-DD')
+    if (data.autorenovable === true) data.nextRenovation = moment(data.lastRenovation).add(data.renovationSpan, unitsMapper[data.renovationUnit]).format('yyyy-MM-DD')
 
     const productCreated = await firebase.db.collection('products').add(data);
 

@@ -28,7 +28,9 @@ import {
     upsertUser,
     getActivitiesByRole,
     upsertProduct,
-    registerSale
+    registerSale,
+    manageSalesFromDay,
+    getSalesFromInterval
 } from "./complexOperations";
 import {addActivity, addSale} from "./createOperations";
 import MailServer from "../../utils/MailServer";
@@ -54,13 +56,11 @@ class Firebase {
         this.messaging = app.messaging()
         this.mailServer = new MailServer()
         const job = new CronJob(
-            '* 1 * * * *',
-            function() {
-                console.log('You will see this message every second');
-            },
+            '* * * * * *',
+            manageSalesFromDay({firebase: this}),
             null,
             true,
-            'America/Los_Angeles'
+            "America/Mexico_City"
         );
 
         job.start()
@@ -77,6 +77,7 @@ class Firebase {
     // *** Auth API ***
     doCreateUserWithEmailAndPassword = (email, password) =>
         this.auth.createUserWithEmailAndPassword(email, password);
+
 
     doSignInWithEmailAndPassword = (email, password) =>
         this.auth.signInWithEmailAndPassword(email, password);
@@ -134,6 +135,8 @@ class Firebase {
         student,
         quantity
     })
+
+    getSalesFromInterval = ({after, before}) => getSalesFromInterval({firebase: this, after, before})
 
     doPasswordUpdate = password =>
         this.auth.currentUser.updatePassword(password);

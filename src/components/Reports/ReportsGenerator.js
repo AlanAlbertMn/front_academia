@@ -1,21 +1,20 @@
 import {Grid, Typography} from "@material-ui/core";
 import React, {useEffect, useState} from "react";
-import BasicButton from "../../BasicComponents/BasicButton";
-import useFormReducer from "../../../utils/useFormReducer";
-import BasicAlert from '../../BasicComponents/BasicAlert'
-import BasicContainer from "../../BasicComponents/BasicContainer";
-import useUpsertSaleStyles from "./styles";
+import BasicButton from "../BasicComponents/BasicButton";
+import useFormReducer from "../../utils/useFormReducer";
+import BasicAlert from '../BasicComponents/BasicAlert'
+import BasicContainer from "../BasicComponents/BasicContainer";
+import useReportGeneratorStyles from "./styles";
 
 import {compose} from 'recompose'
 
 import {validations} from "./utils";
 import {withRouter} from "react-router";
-import {withFirebase} from "../../Firebase";
-import BasicLoading from "../../BasicComponents/BasicLoading";
-import UpsertSaleForm from "./UpsertSaleForm";
+import {withFirebase} from "../Firebase";
+import BasicLoading from "../BasicComponents/BasicLoading";
+import ReportsGeneratorForm from "./ReportsGeneratorForm";
 
-function UpsertSale({history, match, firebase}) {
-    const [students, setStudents] = useState([])
+function ReportsGenerator({history, match, firebase}) {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState()
     const [products, setProducts] = useState([])
@@ -27,51 +26,26 @@ function UpsertSale({history, match, firebase}) {
     const [form, dispatchForm, {updateForm, validateForm, getValues}] = useFormReducer({
         initialState: [
             {
-                product: {
+                after: {
                     value: '',
                     valid: false,
                     error: null,
                 },
-                student: {
+                before: {
                     value: '',
                     valid: false,
                     error: null,
-                },
-                quantity: {
-                    value: 0,
-                    valid: true,
-                    error: null
                 },
             },
         ],
         validations,
     });
 
-    useEffect(() => {
-        firebase.getStudents().then(res => {
-            setStudents(res)
-        }).then(res => {
-            firebase.getProducts().then(res => {
-                setProducts(res)
-                setLoading(false)
-            })
-        }).catch(error => {
-            handleError(error.message || 'Registro de productos no disponible por el momento, contacta al administrador')
-        })
 
-    }, [firebase, match])
+    const classes = useReportGeneratorStyles();
 
-    const classes = useUpsertSaleStyles();
-
-    const handleOnCompleted = async () => {
-        // await firebase.mailServer.sendMail({
-        //     email: form[0].student.value.email,
-        //     message: `Se ha registrado la compra de ${form[0].product.value.name}`,
-        //     to_name: form[0].student.value.name,
-        //     template: 'purchase'
-        // })
-
-        history.replace("/ventas");
+    const handleOnCompleted = async (res) => {
+        console.log(res);
     };
 
     const handleError = (text) => {
@@ -87,9 +61,9 @@ function UpsertSale({history, match, firebase}) {
         const values = getValues()[0]
 
         if (valid) {
-            firebase.registerSale({
+            firebase.getSalesFromInterval({
                 ...values
-            }).then(res => handleOnCompleted())
+            }).then(res => handleOnCompleted(res))
         }
     };
 
@@ -107,7 +81,7 @@ function UpsertSale({history, match, firebase}) {
                 <Typography
                     variant="h3">Registrar venta</Typography>
             </Grid>
-            <UpsertSaleForm
+            <ReportsGeneratorForm
                 dispatchForm={dispatchForm}
                 form={form}
                 students={students}
@@ -130,4 +104,4 @@ function UpsertSale({history, match, firebase}) {
 }
 
 
-export default compose(withRouter, withFirebase)(UpsertSale)
+export default compose(withRouter, withFirebase)(ReportsGenerator)
