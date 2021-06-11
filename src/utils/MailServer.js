@@ -15,14 +15,17 @@ class MailServer {
 
     sendMail = async ({to_name, message, email, template}) => {
         try {
-            if (process.env.MAIL_SERVER === 'active') {
-                await emailjs.send("service_zpofwcv",this.templates[template],{
+            if (process.env.MAIL_SERVER !== 'disabled') {
+                const res = await emailjs.send("service_zpofwcv",this.templates[template],{
                     to_name,
                     message,
                     email,
                     reply_to: this.replyTo,
                 });
+                console.log(res)
             }
+
+
 
             return  true
         } catch (error) {

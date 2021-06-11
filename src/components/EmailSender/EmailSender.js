@@ -49,7 +49,7 @@ function EmailSender({history, match, firebase}) {
             setStudents(res.inscribed)
             setLoading(false)
         })
-    })
+    },[firebase, activity])
 
     const handleOnCompleted = async (res) => {
         history.push('/actividades')
