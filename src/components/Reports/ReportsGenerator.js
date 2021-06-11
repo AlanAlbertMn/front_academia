@@ -5,23 +5,38 @@ import useFormReducer from "../../utils/useFormReducer";
 import BasicAlert from '../BasicComponents/BasicAlert'
 import BasicContainer from "../BasicComponents/BasicContainer";
 import useReportGeneratorStyles from "./styles";
+import moment from "moment";
 
 import {compose} from 'recompose'
+import {CSVLink} from "react-csv";
 
 import {validations} from "./utils";
 import {withRouter} from "react-router";
 import {withFirebase} from "../Firebase";
-import BasicLoading from "../BasicComponents/BasicLoading";
 import ReportsGeneratorForm from "./ReportsGeneratorForm";
 
+
+const formatSales = ({unformattedSales}) => unformattedSales.map(ufSale => ({
+    ...ufSale,
+    date: moment(ufSale.date).format('DD-MM-yyyy'),
+    student: ufSale.student.name,
+    product: ufSale.product.name
+}))
+
+const generateFileName = () => {
+    const generationTime = new Date()
+    return `${moment().format('dd-MM-yyyy')}_reporte_ventas_${generationTime.getHours()}_${generationTime.getMinutes()}_${new Date().getSeconds()}`
+}
+
 function ReportsGenerator({history, match, firebase}) {
-    const [loading, setLoading] = useState(true)
     const [error, setError] = useState()
-    const [products, setProducts] = useState([])
+
     const [alert, handleAlert] = useState({
         open: false,
         text: "",
     });
+
+    const [sales, setSales] = useState(null)
 
     const [form, dispatchForm, {updateForm, validateForm, getValues}] = useFormReducer({
         initialState: [
@@ -41,11 +56,10 @@ function ReportsGenerator({history, match, firebase}) {
         validations,
     });
 
-
     const classes = useReportGeneratorStyles();
 
     const handleOnCompleted = async (res) => {
-        console.log(res);
+        setSales(formatSales({unformattedSales: res}))
     };
 
     const handleError = (text) => {
@@ -71,26 +85,20 @@ function ReportsGenerator({history, match, firebase}) {
         return null;
     }
 
-    if (loading) {
-        return <BasicLoading/>
-    }
-
     return (
         <BasicContainer justify='flex-start' alignContent='flex-start'>
             <Grid item xs={12} className={classes.title}>
                 <Typography
-                    variant="h3">Registrar venta</Typography>
+                    variant="h3">Generador de reportes</Typography>
             </Grid>
             <ReportsGeneratorForm
                 dispatchForm={dispatchForm}
                 form={form}
-                students={students}
-                products={products}
                 updateForm={updateForm}
             />
             <Grid item xs={12} container justify="center" className={classes.title}>
                 <BasicButton handleClick={next} fullWidth color="primary">
-                    Registrar venta
+                    Generar reporte
                 </BasicButton>
             </Grid>
             <BasicAlert
@@ -99,6 +107,11 @@ function ReportsGenerator({history, match, firebase}) {
                 severity="error"
                 text={alert.text}
             />
+            {
+                sales &&
+                <CSVLink filename={generateFileName()} data={sales}>Descargar reporte</CSVLink>
+            }
+
         </BasicContainer>
     );
 }

@@ -86,7 +86,8 @@ const BasicTable = memo(
          handleAdd,
          customDelete,
          handleExtraAction,
-         role
+         role,
+         secondaryAction
      }) => {
         const handleDelete = (id) => {
             if (customDelete && typeof customDelete === 'function') {
@@ -189,6 +190,16 @@ const BasicTable = memo(
                                                                         handleClick={() => handleExtraAction(row.id)}
                                                                     >
                                                                         {content.extraActionText}
+                                                                    </BasicButton>
+                                                                }
+                                                                {
+                                                                    secondaryAction && permissions.extraAction &&
+                                                                    <BasicButton
+                                                                        className={classes.editButton}
+                                                                        color='primary'
+                                                                        handleClick={() => secondaryAction(row.id)}
+                                                                    >
+                                                                        {content.secondaryActionText}
                                                                     </BasicButton>
                                                                 }
                                                                 {

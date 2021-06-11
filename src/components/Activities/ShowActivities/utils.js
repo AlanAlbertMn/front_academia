@@ -52,5 +52,7 @@ export const content = {
     updateLink: '/actualizar-actividad/',
     studentsLink: '/inscripciones/',
     extraActionText: 'Gestionar inscritos',
+    secondaryActionText: 'Enviar correo',
+    secondaryActionLink: '/correo/',
     module: 'activities'
 }

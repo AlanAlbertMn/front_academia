@@ -29,8 +29,9 @@ const getSalesFromDay = async (salesSnapshot, productsSnapshot, firebase) => {
 
     await productsSnapshot.forEach(product => {
         productsIds[product.id] = true
-        const nextRenovation = moment(product.lastRenovation).add(product.renovationSpan, unitsMapper[product.renovationUnit]).format('yyyy-MM-DD')
-        firebase.db.collection('products').doc(product.id).update({nextRenovation})
+        const lastRenovation = product.nextRenovation
+        const nextRenovation = moment(product.nextRenovation).add(product.renovationSpan, unitsMapper[product.renovationUnit]).format('yyyy-MM-DD')
+        firebase.db.collection('products').doc(product.id).update({nextRenovation, lastRenovation})
     })
 
     salesSnapshot.forEach(sale => {
@@ -94,8 +95,8 @@ const unitsMapper = {
 }
 
 export const getSalesFromInterval = async ({after, before, firebase}) => {
-    const afterDate = moment(after)
-    const beforeDate = moment(before)
+    const afterDate = moment(after).subtract(1, 'days')
+    const beforeDate = moment(before).add(1, 'days')
 
     const range = moment().range(afterDate, beforeDate)
 
@@ -103,7 +104,6 @@ export const getSalesFromInterval = async ({after, before, firebase}) => {
 
     return sales.filter(sale => {
         const saleDate = moment(sale.date)
-
         return range.contains(saleDate)
     })
 }
@@ -116,7 +116,6 @@ const sendEmail = async ({firebase, email, product, to_name}) => {
         template: 'purchase'
     })
 }
-
 
 export const manageSalesFromDay = async ({firebase}) => {
     const currentDay = moment().format(BASIC_DATE_FORMAT)

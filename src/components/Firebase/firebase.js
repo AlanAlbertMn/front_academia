@@ -47,7 +47,6 @@ const config = {
     measurementId: 'G-RSSHL2D4DT',
 };
 
-
 class Firebase {
     constructor() {
         app.initializeApp(config);
@@ -63,7 +62,7 @@ class Firebase {
             "America/Mexico_City"
         );
 
-        job.start()
+        //if (process.env.MODE === 'production') job.start()
     }
 
     enableMessaging = async () => {

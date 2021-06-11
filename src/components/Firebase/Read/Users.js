@@ -10,6 +10,7 @@ export const readUser = async ({firebase, id}) => {
 
 }
 
+
 export const readUserWithEmail = async ({firebase, email}) => {
     const usersSnapshot = await firebase.db.collection('users').where('email', '==', email).get();
 

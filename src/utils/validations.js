@@ -79,6 +79,13 @@ export const addressRequired = {
     }
 }
 
+export const messageRequired = {
+    presence: {
+        allowEmpty: false,
+        message: '^*El mensaje es requerido'
+    }
+}
+
 export const inscriptionDateRequired = {
     presence: {
         allowEmpty: false,

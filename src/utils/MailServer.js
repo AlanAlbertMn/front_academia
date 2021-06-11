@@ -7,23 +7,26 @@ class MailServer {
         init('user_95Xmf7hDVraErAKFKsOpA')
         this.templates = {
             purchase: 'template_7u026r3',
-            inscription: 'template_peebc5i'
+            message: 'template_peebc5i'
         }
 
-        this.replayTo = 'academiaweb369@gmail.com'
+        this.replyTo = 'academiaweb369@gmail.com'
     }
 
     sendMail = async ({to_name, message, email, template}) => {
         try {
-            await emailjs.send("service_zpofwcv",this.templates[template],{
-                to_name,
-                message,
-                email,
-                reply_to: this.replayTo,
-            });
+            if (process.env.MAIL_SERVER === 'active') {
+                await emailjs.send("service_zpofwcv",this.templates[template],{
+                    to_name,
+                    message,
+                    email,
+                    reply_to: this.replyTo,
+                });
+            }
 
             return  true
         } catch (error) {
+            console.log(error)
             return false
         }
     }

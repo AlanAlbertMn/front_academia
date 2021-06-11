@@ -5,7 +5,8 @@ export const permissionsByModule = {
         edit: ['ADMIN'],
         subscribe: ['ADMIN'],
         delete: ['ADMIN'],
-        extraAction: ['ADMIN', 'INSTRUCTOR']
+        extraAction: ['ADMIN', 'INSTRUCTOR'],
+        secondaryAction: ['ADMIN', 'INSTRUCTOR']
     },
     incriptions: {
         read: ['ADMIN', 'INSTRUCTOR'],
@@ -35,6 +36,13 @@ export const permissionsByModule = {
         subscribe: ['ADMIN'],
         delete: ['ADMIN']
     },
+    reports: {
+        read: ['ADMIN'],
+        create: ['ADMIN'],
+        edit: ['ADMIN'],
+        subscribe: ['ADMIN'],
+        delete: ['ADMIN']
+    }
 }
 
 export const getPermissionsFromModule = ({module, role}) => {

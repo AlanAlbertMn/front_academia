@@ -31,6 +31,10 @@ function ShowActivitiesContainer({history, firebase}) {
         history.push(content.studentsLink + id)
     }
 
+    const secondaryAction = (id) => {
+        history.push(content.secondaryActionLink + id)
+    }
+
     useEffect(() => {
         loadActivities({firebase, id: appProvider.user, role: appProvider.user.role}).then(res => setActivities(res))
     }, [firebase, appProvider])
@@ -52,6 +56,7 @@ function ShowActivitiesContainer({history, firebase}) {
                 refetch={refetch}
                 deleteMutation={firebase.removeActivity}
                 handleExtraAction={handleStudents}
+                secondaryAction={secondaryAction}
                 role={appProvider.user.role}
             />
         </BasicContainer>

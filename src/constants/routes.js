@@ -6,6 +6,9 @@ import ShowProducts from '../components/Products/ShowProducts'
 import UpsertProduct from "../components/Products/UpsertProducts";
 import UpsertSale from "../components/Sales/UpsertSales";
 import ShowSales from "../components/Sales/ShowSales";
+import ReportsGenerator from "../components/Reports";
+import EmailSender from "../components/EmailSender/EmailSender";
+import {Email} from "@material-ui/icons";
 
 const routes = [
     {
@@ -91,7 +94,21 @@ const routes = [
         roles: ['ADMIN'],
         name: 'Registrar venta',
         shouldAppear: false
-    }
+    },
+    {
+        path: '/reportes',
+        component: ReportsGenerator,
+        roles: ['ADMIN'],
+        name: 'Reportes',
+        shouldAppear: true
+    },
+    {
+        path: '/correo/:activity',
+        component: EmailSender,
+        roles: ['ADMIN'],
+        name: 'Correo',
+        shouldAppear: false
+    },
 ];
 
 export default routes;
